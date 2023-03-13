@@ -23,8 +23,10 @@ public class RestApiClient {
         String timestampString = String.format("%d", timestamp);
         boolean isSuccess = false;
 
+        System.out.println(json);
+
         int cnt = 0;
-        while (cnt < 100) {
+        while (cnt < 10) {
 
             Request request = new Request.Builder()
                     .url(url)
@@ -43,10 +45,11 @@ public class RestApiClient {
                 } else {
                     Response response = client.newCall(request).execute();
                     assert response.body() != null;
-                    if (!response.body().string().contains("code")) {
+                    String told = response.body().string();
+                    if (!told.contains("code")) {
                         break;
                     }
-                    System.out.println(response.body().string());
+                    System.out.println(told);
                 }
 
 

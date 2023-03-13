@@ -30,7 +30,7 @@ public class MsgHandler implements MessageHandler {
         int randomId = random.nextInt();
         String symbol = pair.getSymbol().toString();
 
-        Asset bought = pair.isReversed() ? pair.getSource() : pair.getDestination();
+        Asset bought = pair.isReversed() ? pair.getDestination() : pair.getSource();
         String side = pair.isReversed() ? "BUY" : "SELL";
         String amountOrQuantity = pair.isReversed() ? "amount" : "quantity";
 
@@ -38,12 +38,12 @@ public class MsgHandler implements MessageHandler {
 
         String body = String.format("{\n" +
                 "    \"symbol\": \"%s\",  \n" +
-                "    \"type\": \"MARKET\",\n" +
+               // "    \"type\": \"MARKET\",\n" +
                 "    \"%s\": \"%s\",\n" +
-                "    \"side\": \"%s\",\n" +
-                "    \"timeInForce\": \"GTC\",\n" +
-                "    \"clientOrderId\": \"%d\"\n" +
-                "}", symbol, amountOrQuantity, amountString, side, randomId);
+                "    \"side\": \"%s\"\n" + // add comma
+                //"    \"timeInForce\": \"GTC\",\n" +
+                //"    \"clientOrderId\": \"%d\"\n" +
+                "}", symbol, amountOrQuantity, amountString, side);
 
         String request = String.format(
 

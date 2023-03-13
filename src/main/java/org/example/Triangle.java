@@ -103,7 +103,7 @@ public class Triangle {
          amountOfBTCToUse = min(min(amount1, amount2 * price1), amount3 * price1 * price2);
 
          */
-        double amountOfBTCToUse = 0.008;
+        double amountOfBTCToUse = 0.0002;
 
         boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
                 amountOfBTCToUse * price1 < asset2.getMinAmount() ||
