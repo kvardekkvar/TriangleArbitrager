@@ -32,10 +32,11 @@ public class RestApiClient {
 
         try {
             System.out.println("Api sends market order...\n");
-            Response response = client.newCall(request).execute();
-            assert response.body() != null;
-            System.out.println(response.body().string());
-        } catch (NullPointerException | IOException e) {
+            System.out.println(json);
+            //Response response = client.newCall(request).execute();
+            //assert response.body() != null;
+            //System.out.println(response.body().string());
+        } catch (NullPointerException e) {
             throw new RuntimeException(e);
         }
     }

@@ -6,23 +6,29 @@ import org.example.models.symbols_request.SymbolTradeLimit;
 public class Asset {
 
 
-
     private String name;
     private double minAmount;
 
+
+    int maxDigitsAfterZero;
     private boolean isDelisted;
-    public Asset(String name, double minAmount){
+
+    public Asset(String name, double minAmount, int maxDigitsAfterZero) {
         this.name = name;
         this.minAmount = minAmount;
+        this.maxDigitsAfterZero = maxDigitsAfterZero;
     }
 
-    public static Asset fromSymbol(Symbol symbol, boolean isFirst){
-        String name = isFirst? symbol.getBaseCurrencyName() : symbol.getQuoteCurrencyName();
+    public static Asset fromSymbol(Symbol symbol, boolean isFirst) {
+        String name = isFirst ? symbol.getBaseCurrencyName() : symbol.getQuoteCurrencyName();
         SymbolTradeLimit limit = symbol.getSymbolTradeLimit();
-        String limitAmount = isFirst? limit.getMinQuantity() : limit.getMinAmount();
+        String limitAmount = isFirst ? limit.getMinQuantity() : limit.getMinAmount();
         double minAmount = Double.parseDouble(limitAmount);
-        return new Asset(name, minAmount);
+
+        int maxPrecision = isFirst ? limit.getQuantityScale() : limit.getAmountScale();
+        return new Asset(name, minAmount, maxPrecision);
     }
+
     public String getName() {
         return name;
     }
@@ -47,11 +53,15 @@ public class Asset {
         isDelisted = delisted;
     }
 
-    public boolean equals(Asset other){
+    public int getMaxDigitsAfterZero() {
+        return maxDigitsAfterZero;
+    }
+
+    public boolean equals(Asset other) {
         return this.getName().equals(other.getName());
     }
 
-    public String toString(){
+    public String toString() {
         return name;
     }
 }

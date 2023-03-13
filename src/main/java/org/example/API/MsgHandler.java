@@ -28,10 +28,13 @@ public class MsgHandler implements MessageHandler {
         long timestamp = System.currentTimeMillis();
 
         int randomId = random.nextInt();
-
         String symbol = pair.getSymbol().toString();
-        String side = pair.isReversed() ? "SELL" : "BUY";
-        String amountOrQuantity = pair.isReversed() ? "quantity" : "amount";
+
+        Asset bought = pair.isReversed() ? pair.getSource() : pair.getDestination();
+        String side = pair.isReversed() ? "BUY" : "SELL";
+        String amountOrQuantity = pair.isReversed() ? "amount" : "quantity";
+
+        String amountString = Util.formattedAmount(amount, bought.getMaxDigitsAfterZero());
 
         String body = String.format("{\n" +
                 "    \"symbol\": \"%s\",  \n" +
@@ -40,13 +43,13 @@ public class MsgHandler implements MessageHandler {
                 "    \"side\": \"%s\",\n" +
                 "    \"timeInForce\": \"GTC\",\n" +
                 "    \"clientOrderId\": \"%d\"\n" +
-                "}", symbol, amountOrQuantity, Util.formattedAmount(amount), side, randomId);
+                "}", symbol, amountOrQuantity, amountString, side, randomId);
 
         String request = String.format(
 
                 "POST\n" +
-                "/orders\n" +
-                "requestBody=%s" +
+                        "/orders\n" +
+                        "requestBody=%s" +
                         "&signTimestamp=%d", body, timestamp);
 
         //System.out.println(request);
@@ -113,10 +116,9 @@ public class MsgHandler implements MessageHandler {
                 List<Triangle> profitableReversedTriangles = triangleInfo.get(1);
 
                 for (Triangle triangle : profitableTriangles) {
-                    double amount = triangle.getAmountToTrade();
-                    sendBuyMessage(triangle.getFirst(), amount);
-                    sendBuyMessage(triangle.getSecond(), amount);
-                    sendBuyMessage(triangle.getThird(), amount);
+                    sendBuyMessage(triangle.getFirst(), triangle.getAmountToTrade1());
+                    sendBuyMessage(triangle.getSecond(), triangle.getAmountToTrade2());
+                    sendBuyMessage(triangle.getThird(), triangle.getAmountToTrade3());
                 }
                 for (Triangle reversedTriangle : profitableReversedTriangles) {
                     //needs implementation

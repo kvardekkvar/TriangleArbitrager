@@ -47,9 +47,14 @@ public class TradingPair {
 
     public String logPrices() {
         String result = "";
-        BookEntry entry = MarketData.INSTANCE.getDataTable().get(this);
+        MarketData data = MarketData.INSTANCE;
+        TradingPair pair = data.findTradingPairBetween(source, destination);
+        BookEntry entry = data.getDataTable().get(pair);
         if (entry != null) {
-            result = String.format("pair %s, price1: %s, price2: %s", this.toString(), entry.sourcePrice, entry.destinationPrice);
+            result = String.format("pair %s, price1: %s, price2: %s", this, entry.sourcePrice, entry.destinationPrice);
+        }
+        else {
+            System.out.printf("ololo %s %s %s\n", source, destination, this);
         }
         return result;
     }

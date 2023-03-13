@@ -5,11 +5,11 @@ import org.junit.Test;
 public class TestUtil {
 
     @Test
-    public void formattedAmontTest(){
-        double amount = 0.1 + 0.2;
+    public void formattedAmountTest(){
+        double amount = 0.1234567;
 
-        String expected = "0.30000000";
-        String actual = Util.formattedAmount(amount);
+        String expected = "0.123";
+        String actual = Util.formattedAmount(amount, 3);
 
         Assert.assertEquals(expected, actual);
     }

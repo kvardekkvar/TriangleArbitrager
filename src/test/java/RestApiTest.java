@@ -10,8 +10,8 @@ public class RestApiTest {
     public void testPostRequestOrders() {
 
         PoloniexApi api = new PoloniexApi();
-        Asset asset1 = new Asset("BTC", 0.0001);
-        Asset asset2 = new Asset("USDT", 1);
+        Asset asset1 = new Asset("BTC", 0.0001, 6);
+        Asset asset2 = new Asset("USDT", 1, 2);
         MsgHandler handler = new MsgHandler();
         handler.setApi(api);
         OrientedPair orientedPair = new OrientedPair(asset1, asset2);
