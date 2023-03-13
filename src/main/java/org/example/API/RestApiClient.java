@@ -1,12 +1,13 @@
 package org.example.API;
 
 import okhttp3.*;
+import org.example.util.Constants;
 
 import java.io.IOException;
 
 public class RestApiClient {
 
-    public static final String BASE_URL =  "https://api.poloniex.com";
+    public static final String BASE_URL = "https://api.poloniex.com";
     private OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     public final static String HEADER_TIMESTAMP = "signTimestamp";
@@ -15,29 +16,44 @@ public class RestApiClient {
     public final static String HEADER_SIGN_VERSION = "signVersion";
     public final static String HEADER_SIGNATURE = "signature";
 
-    public void sendMakeOrderRequest(String json, String signature, long timestamp){
+    public void sendMakeOrderRequest(String json, String signature, long timestamp) {
         String url = String.format("%s/orders", BASE_URL);
 
         RequestBody body = RequestBody.create(json, JSON);
         String timestampString = String.format("%d", timestamp);
+        boolean isSuccess = false;
 
-        Request request = new Request.Builder()
-                .url(url)
-                .header(HEADER_KEY, Crypto.API_KEY)
-                .header(HEADER_SIGNATURE, signature)
-                .header(HEADER_TIMESTAMP, timestampString)
-                .post(body)
-                .build();
+        int cnt = 0;
+        while (cnt < 100) {
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header(HEADER_KEY, Crypto.API_KEY)
+                    .header(HEADER_SIGNATURE, signature)
+                    .header(HEADER_TIMESTAMP, timestampString)
+                    .post(body)
+                    .build();
+
+            cnt++;
+            try {
+                System.out.println("Api sends market order...\n");
+                //System.out.println(json);
+                if (Constants.MOCK) {
+                    break;
+                } else {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    if (!response.body().string().contains("code")) {
+                        break;
+                    }
+                    System.out.println(response.body().string());
+                }
 
 
-        try {
-            System.out.println("Api sends market order...\n");
-            System.out.println(json);
-            //Response response = client.newCall(request).execute();
-            //assert response.body() != null;
-            //System.out.println(response.body().string());
-        } catch (NullPointerException e) {
-            throw new RuntimeException(e);
+            } catch (NullPointerException | IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 }

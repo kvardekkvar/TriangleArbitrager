@@ -61,7 +61,6 @@ public class Crypto {
         } finally {
             myReader.close();
         }
-        System.out.println(apiKey);
         return apiKey;
     }
 
