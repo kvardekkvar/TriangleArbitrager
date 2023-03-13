@@ -55,7 +55,7 @@ public class Main {
 
             while (!RESTART_NEEDED) {
                 try {
-                    LockSupport.parkNanos(1000) ;
+                    LockSupport.parkNanos(16384) ;
                 } catch (Exception e) {
                     break;
                 }

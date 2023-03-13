@@ -1,9 +1,6 @@
 package org.example.API;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import okhttp3.*;
 
 import java.io.IOException;
 
@@ -32,9 +29,13 @@ public class RestApiClient {
                 .post(body)
                 .build();
 
+
         try {
-            client.newCall(request).execute();
-        } catch (IOException e) {
+            System.out.println("Api sends market order...\n");
+            Response response = client.newCall(request).execute();
+            assert response.body() != null;
+            System.out.println(response.body().string());
+        } catch (NullPointerException | IOException e) {
             throw new RuntimeException(e);
         }
     }
