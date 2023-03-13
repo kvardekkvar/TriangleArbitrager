@@ -8,6 +8,7 @@ import org.example.models.responses.BookResponse;
 import org.example.models.responses.SubscriptionResponse;
 import org.example.models.responses.SymbolsResponse;
 import org.example.models.symbols_request.Symbol;
+import org.example.util.Util;
 
 import javax.websocket.MessageHandler;
 import java.util.List;
@@ -28,16 +29,18 @@ public class MsgHandler implements MessageHandler {
 
         int randomId = random.nextInt();
 
+        String symbol = pair.getSymbol().toString();
         String side = pair.isReversed() ? "SELL" : "BUY";
+        String amountOrQuantity = pair.isReversed() ? "quantity" : "amount";
 
         String body = String.format("{\n" +
                 "    \"symbol\": \"%s\",  \n" +
                 "    \"type\": \"MARKET\",\n" +
-                "    \"quantity\": \"%s\",\n" +
-                "    \"side\": \"BUY\",\n" +
-                "    \"timeInForce\": \"IOC\",\n" +
+                "    \"%s\": \"%s\",\n" +
+                "    \"side\": \"%s\",\n" +
+                "    \"timeInForce\": \"GTC\",\n" +
                 "    \"clientOrderId\": \"%d\"\n" +
-                "}", pair.toString(), amount, randomId);
+                "}", symbol, amountOrQuantity, Util.formattedAmount(amount), side, randomId);
 
         String request = String.format(
 
@@ -70,10 +73,7 @@ public class MsgHandler implements MessageHandler {
 
         Gson gson = new Gson();
         //System.out.println("received message\n");
-
-         if(message.contains("auth")){
-             System.out.println(message);
-         }
+        //System.out.println(message);
 
 
         SymbolsResponse symbolsResponse;

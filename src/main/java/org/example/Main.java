@@ -31,9 +31,9 @@ public class Main {
 
             List<TradingPair> subscriptions = new ArrayList<>();
             for (Triangle triangle : MarketData.INSTANCE.getTriangles()) {
-                TradingPair first = triangle.getFirst();
-                TradingPair second = triangle.getSecond();
-                TradingPair third = triangle.getThird();
+                TradingPair first = triangle.getFirst().getSymbol();
+                TradingPair second = triangle.getSecond().getSymbol();
+                TradingPair third = triangle.getThird().getSymbol();
                 if (!subscriptions.contains(first)) {
                     subscriptions.add(first);
                 }

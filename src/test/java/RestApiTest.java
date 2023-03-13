@@ -1,13 +1,8 @@
 import org.example.API.MsgHandler;
 import org.example.API.PoloniexApi;
 import org.example.Asset;
-import org.example.MarketData;
 import org.example.OrientedPair;
-import org.example.TradingPair;
-import org.example.constants.Constants;
 import org.junit.Test;
-
-import javax.websocket.MessageHandler;
 
 public class RestApiTest {
 

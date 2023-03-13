@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.constants.Constants;
+import org.example.util.Constants;
 
 import java.util.*;
 
