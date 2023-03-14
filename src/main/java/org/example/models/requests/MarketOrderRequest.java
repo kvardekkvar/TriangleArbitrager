@@ -4,8 +4,8 @@ public class MarketOrderRequest {
     private String symbol;
     private String side;
 
-    private String quantity = "0";
-    private String amount = "0";
+    private String quantity;
+    private String amount;
 
 
     public MarketOrderRequest(String symbol, String amountOrQuantity, boolean isAmount, String side) {
