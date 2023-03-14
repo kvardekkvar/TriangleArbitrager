@@ -83,15 +83,9 @@ public class Triangle {
             WAS WRONG
             */
 
-        double price1 = first.isReversed? marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
-        double price2 = second.isReversed? marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
-        double price3 = third.isReversed? marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
-
-
-        // needed to deal with the case when two bases coincide
-        price1 = first.isReversed() ? 1 / price1 : price1;
-        price2 = second.isReversed() ? 1 / price2 : price2;
-        price3 = third.isReversed() ? 1 / price3 : price3;
+        double price1 = first.isReversed? 1/ marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
+        double price2 = second.isReversed? 1/ marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
+        double price3 = third.isReversed? 1/ marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
 
         if (price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1) {
             //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
