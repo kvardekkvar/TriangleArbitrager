@@ -10,13 +10,13 @@ public class Asset {
     private double minAmount;
 
 
-    int maxDigitsAfterZero;
+    //int maxDigitsAfterZero;
     private boolean isDelisted;
 
-    public Asset(String name, double minAmount, int maxDigitsAfterZero) {
+    public Asset(String name, double minAmount) {
         this.name = name;
         this.minAmount = minAmount;
-        this.maxDigitsAfterZero = maxDigitsAfterZero;
+        //this.maxDigitsAfterZero = maxDigitsAfterZero;
     }
 
     public static Asset fromSymbol(Symbol symbol, boolean isFirst) {
@@ -25,8 +25,8 @@ public class Asset {
         String limitAmount = isFirst ? limit.getMinQuantity() : limit.getMinAmount();
         double minAmount = Double.parseDouble(limitAmount);
 
-        int maxPrecision = isFirst ? limit.getQuantityScale() : limit.getAmountScale();
-        return new Asset(name, minAmount, maxPrecision);
+        //int maxPrecision = isFirst ? limit.getQuantityScale() : limit.getAmountScale();
+        return new Asset(name, minAmount);
     }
 
     public String getName() {
@@ -53,9 +53,9 @@ public class Asset {
         isDelisted = delisted;
     }
 
-    public int getMaxDigitsAfterZero() {
-        return maxDigitsAfterZero;
-    }
+    //public int getMaxDigitsAfterZero() {
+    //    return maxDigitsAfterZero;
+    //}
 
     public boolean equals(Asset other) {
         return this.getName().equals(other.getName());

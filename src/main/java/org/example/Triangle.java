@@ -21,9 +21,9 @@ public class Triangle {
     private double amountToTrade3; // Amount of Y to sell
 
     public Triangle(TradingPair first, TradingPair second, TradingPair third) {
-        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination());
-        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination());
-        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination());
+        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination(), first.quantityScale, first.amountScale);
+        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination(), second.quantityScale, second.amountScale);
+        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination(), third.quantityScale, third.amountScale);
 
         boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
         if (isReverseNeeded) {
@@ -120,9 +120,9 @@ public class Triangle {
         this.amountToTrade2 = second.isReversed() ? amountOfBTCToUse * price1 * price2 * fee * fee : amountOfBTCToUse * price1 * fee * fee;
         this.amountToTrade3 = third.isReversed() ? amountOfBTCToUse * price1 * price2 * price3 * fee * fee * fee : amountOfBTCToUse * price1 * price2 * fee * fee * fee;
         */
-        this.amountToTrade1 = amountOfBTCToUse * price1 * fee;
-        this.amountToTrade2 = amountToTrade1 * price2 * fee;
-        this.amountToTrade3 = amountToTrade2 * price3 * fee;
+        this.amountToTrade1 = amountOfBTCToUse * fee ;
+        this.amountToTrade2 = amountToTrade1 * price1 * fee;
+        this.amountToTrade3 = amountToTrade2 * price2 * fee;
 
 
         System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,

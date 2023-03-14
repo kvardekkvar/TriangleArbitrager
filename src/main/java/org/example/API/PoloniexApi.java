@@ -42,7 +42,7 @@ public class PoloniexApi {
         send(data, true);
     }
 
-    public void makeOrder(String json, String signature, long timestamp){
+    public void makeOrder(String json, String signature, long timestamp) throws LowBalanceException {
         privateRest.sendMakeOrderRequest(json, signature, timestamp);
     }
 

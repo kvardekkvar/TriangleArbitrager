@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.example.*;
 import org.example.models.book_request.BookData;
+import org.example.models.requests.MarketOrderRequest;
 import org.example.models.responses.BookResponse;
 import org.example.models.responses.SubscriptionResponse;
 import org.example.models.responses.SymbolsResponse;
@@ -22,54 +23,49 @@ public class MsgHandler implements MessageHandler {
 
     private PoloniexApi api;
 
-    public void sendBuyMessage(OrientedPair pair, double amount) {
+
+    public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
+        MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);
+        Gson gson = new Gson();
+        return gson.toJson(orderRequest);
+    }
+
+    public String prepareBuyMessageSignature(String body, long timestamp) {
         Crypto crypto = new Crypto();
 
-        long timestamp = System.currentTimeMillis();
-
-        int randomId = random.nextInt();
-        String symbol = pair.getSymbol().toString();
-
-        Asset bought = pair.isReversed() ? pair.getDestination() : pair.getSource();
-        String side = pair.isReversed() ? "BUY" : "SELL";
-        String amountOrQuantity = pair.isReversed() ? "amount" : "quantity";
-
-        String amountString = Util.formattedAmount(amount, bought.getMaxDigitsAfterZero());
-
-        String body = String.format("{\n" +
-                "    \"symbol\": \"%s\",  \n" +
-               // "    \"type\": \"MARKET\",\n" +
-                "    \"%s\": \"%s\",\n" +
-                "    \"side\": \"%s\"\n" + // add comma
-                //"    \"timeInForce\": \"GTC\",\n" +
-                //"    \"clientOrderId\": \"%d\"\n" +
-                "}", symbol, amountOrQuantity, amountString, side);
-
         String request = String.format(
-
                 "POST\n" +
                         "/orders\n" +
                         "requestBody=%s" +
                         "&signTimestamp=%d", body, timestamp);
 
-        //System.out.println(request);
-
         String signature = crypto.getSignature(request);
+        return signature;
+    }
 
-        /*
-        String requestAuth = String.format("{\n" +
-                "\"event\": \"subscribe\",\n" +
-                "\"channel\": [\"auth\"],\n" +
-                "\"params\": {\n" +
-                "\"key\": \"%s\",\n" +
-                "\"signTimestamp\": %d,\n" +
-                "\"signature\": \"%s\"}\n}", Crypto.API_KEY, timestamp, signature);
+    public void sendBuyMessage(OrientedPair pair, double amount) {
+        long timestamp = System.currentTimeMillis();
+        String symbol = pair.getSymbol().toString();
+        boolean isAmount = pair.isReversed();
+        String side = isAmount ? "BUY" : "SELL";
+        String amountOrQuantity = isAmount ? "amount" : "quantity";
+        int scale = isAmount ? pair.getAmountScale() : pair.getQuantityScale();
+        String amountString = Util.formattedAmount(amount, scale);
+        boolean isSuccess = false;
 
-        System.out.println(requestAuth);
-        */
+        while (!isSuccess)
+            try {
+                String body = prepareBuyMessageBody(symbol, amountString, isAmount, side);
+                String signature = prepareBuyMessageSignature(body, timestamp);
 
-        System.out.printf("Order message sent: %s\n%n", pair.logPrices());
-        api.makeOrder(body, signature, timestamp);
+                System.out.printf("Order message sent: %s\n%n", pair.logPrices());
+                api.makeOrder(body, signature, timestamp);
+                isSuccess = true;
+            } catch (LowBalanceException e) {
+                double currentAmount = Double.parseDouble(amountString);
+                double lesserAmount = currentAmount * 0.993;
+                amountString = Util.formattedAmount(lesserAmount, scale);
+            }
     }
 
     public void handleMessage(String message) {
@@ -144,13 +140,7 @@ public class MsgHandler implements MessageHandler {
                 List<List<Symbol>> symbols2DArray = symbolsResponse.getData();
                 for (List<Symbol> symbolRow : symbols2DArray) {
                     for (Symbol symbol : symbolRow) {
-
-                        //System.out.println(symbol.getSymbol());
-
-                        Asset source = Asset.fromSymbol(symbol, true);
-                        Asset destination = Asset.fromSymbol(symbol, false);
-                        TradingPair pair = new TradingPair(source, destination);
-
+                        TradingPair pair = TradingPair.fromSymbol(symbol);
                         marketData.addPair(pair);
                     }
                     marketData.initializeTriangles();

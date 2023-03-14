@@ -16,7 +16,7 @@ public class RestApiClient {
     public final static String HEADER_SIGN_VERSION = "signVersion";
     public final static String HEADER_SIGNATURE = "signature";
 
-    public void sendMakeOrderRequest(String json, String signature, long timestamp) {
+    public void sendMakeOrderRequest(String json, String signature, long timestamp) throws LowBalanceException {
         String url = String.format("%s/orders", BASE_URL);
 
         RequestBody body = RequestBody.create(json, JSON);
@@ -49,12 +49,18 @@ public class RestApiClient {
                     if (!told.contains("code")) {
                         break;
                     }
+                    if (told.contains("Low available balance")) {
+                        throw new LowBalanceException();
+                    }
+
                     System.out.println(told);
                 }
 
 
             } catch (NullPointerException | IOException e) {
                 throw new RuntimeException(e);
+            } catch (LowBalanceException e) {
+                throw new LowBalanceException();
             }
 
         }

@@ -13,4 +13,13 @@ public class TestUtil {
 
         Assert.assertEquals(expected, actual);
     }
+    @Test
+    public void formattedAmountTestLargeNumber(){
+        double amount = 55555.1234567;
+
+        String expected = "55555.123";
+        String actual = Util.formattedAmount(amount, 3);
+
+        Assert.assertEquals(expected, actual);
+    }
 }

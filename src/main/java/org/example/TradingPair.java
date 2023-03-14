@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.models.symbols_request.Symbol;
+import org.example.models.symbols_request.SymbolTradeLimit;
+
 public class TradingPair {
 
     protected Asset source;
@@ -7,9 +10,31 @@ public class TradingPair {
 
     protected Asset destination;
 
-    public TradingPair(Asset source, Asset destination) {
+    int quantityScale;
+
+    public int getQuantityScale() {
+        return quantityScale;
+    }
+
+    public int getAmountScale() {
+        return amountScale;
+    }
+
+    int amountScale;
+
+    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale) {
         this.source = source;
         this.destination = destination;
+        this.quantityScale = quantityScale;
+        this.amountScale = amountScale;
+    }
+
+    public static TradingPair fromSymbol(Symbol symbol) {
+        SymbolTradeLimit limit = symbol.getSymbolTradeLimit();
+        Asset source = Asset.fromSymbol(symbol, true);
+        Asset destination = Asset.fromSymbol(symbol, false);
+        return new TradingPair(source, destination,
+                limit.getQuantityScale(), limit.getAmountScale());
     }
 
     public Asset getSource() {
@@ -52,8 +77,7 @@ public class TradingPair {
         BookEntry entry = data.getDataTable().get(pair);
         if (entry != null) {
             result = String.format("pair %s, price1: %s, price2: %s", this, entry.sourcePrice, entry.destinationPrice);
-        }
-        else {
+        } else {
             System.out.printf("ololo %s %s %s\n", source, destination, this);
         }
         return result;
