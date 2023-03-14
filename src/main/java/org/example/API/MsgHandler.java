@@ -41,7 +41,7 @@ public class MsgHandler implements MessageHandler {
 
     public void sendBuyMessage(OrientedPair pair, double amount) {
         long timestamp = System.currentTimeMillis();
-        String symbol = pair.getSymbol().toString();
+        String symbol = pair.getSymbol();
 
         boolean isAmount = pair.isReversed();
         String side = isAmount ? "BUY" : "SELL";
@@ -138,7 +138,6 @@ public class MsgHandler implements MessageHandler {
                         marketData.addPair(pair);
                     }
                     marketData.initializeTriangles();
-
                 }
             }
         } catch (NullPointerException | JsonSyntaxException ignored) {

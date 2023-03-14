@@ -5,6 +5,7 @@ import org.example.Main;
 import javax.websocket.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 @ClientEndpoint
 public class WebsocketClientEndpoint {
@@ -70,6 +71,7 @@ public class WebsocketClientEndpoint {
     public void onError(Session session, Throwable t){
         System.out.println(t.toString());
         t.printStackTrace();
+        System.out.println(Arrays.toString(t.getStackTrace()));
     }
     /**
      * register message handler
@@ -83,7 +85,7 @@ public class WebsocketClientEndpoint {
     /**
      * Send a message.
      *
-     * @param message
+     * @param message  message text
      */
     public void sendMessage(String message) {
         this.userSession.getAsyncRemote().sendText(message);

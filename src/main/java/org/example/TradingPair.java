@@ -12,21 +12,19 @@ public class TradingPair {
 
     int quantityScale;
 
-    public int getQuantityScale() {
-        return quantityScale;
-    }
-
-    public int getAmountScale() {
-        return amountScale;
-    }
 
     int amountScale;
 
-    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale) {
+
+
+    String state;
+
+    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale, String state) {
         this.source = source;
         this.destination = destination;
         this.quantityScale = quantityScale;
         this.amountScale = amountScale;
+        this.state = state;
     }
 
     public static TradingPair fromSymbol(Symbol symbol) {
@@ -34,7 +32,23 @@ public class TradingPair {
         Asset source = Asset.fromSymbol(symbol, true);
         Asset destination = Asset.fromSymbol(symbol, false);
         return new TradingPair(source, destination,
-                limit.getQuantityScale(), limit.getAmountScale());
+                limit.getQuantityScale(), limit.getAmountScale(),
+                symbol.getState());
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    public int getQuantityScale() {
+        return quantityScale;
+    }
+
+    public int getAmountScale() {
+        return amountScale;
     }
 
     public Asset getSource() {

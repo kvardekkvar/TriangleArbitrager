@@ -26,7 +26,7 @@ public class RestApiClient {
         System.out.println(json);
 
         int cnt = 0;
-        while (cnt < 10) {
+        while (cnt < 1) {
 
             Request request = new Request.Builder()
                     .url(url)

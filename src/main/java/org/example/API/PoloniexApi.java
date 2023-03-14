@@ -1,5 +1,6 @@
 package org.example.API;
 
+import javax.websocket.SendResult;
 import java.net.URI;
 
 public class PoloniexApi {

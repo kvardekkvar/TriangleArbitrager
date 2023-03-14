@@ -17,9 +17,9 @@ public class Triangle {
     private double amountToTrade3; // Amount of Y to sell
 
     public Triangle(TradingPair first, TradingPair second, TradingPair third) {
-        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination(), first.quantityScale, first.amountScale);
-        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination(), second.quantityScale, second.amountScale);
-        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination(), third.quantityScale, third.amountScale);
+        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination(), first.quantityScale, first.amountScale, first.getState());
+        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination(), second.quantityScale, second.amountScale, second.getState());
+        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination(), third.quantityScale, third.amountScale, third.getState());
 
         boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
         if (isReverseNeeded) {
@@ -101,7 +101,7 @@ public class Triangle {
          amountOfBTCToUse = min(min(amount1, amount2 * price1), amount3 * price1 * price2);
 
          */
-        double amountOfBTCToUse = 0.0005;
+        double amountOfBTCToUse = 0.004;
 
         boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
                 amountOfBTCToUse * price1 < asset2.getMinAmount() ||

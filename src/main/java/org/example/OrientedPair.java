@@ -6,8 +6,8 @@ public class OrientedPair extends TradingPair {
     Asset baseCurrency;
     boolean isReversed;
 
-    public OrientedPair(Asset source, Asset destination, int quantityScale, int amountScale) {
-        super(source, destination, quantityScale, amountScale);
+    public OrientedPair(Asset source, Asset destination, int quantityScale, int amountScale, String state) {
+        super(source, destination, quantityScale, amountScale, state);
         baseCurrency = destination;
         isReversed = false;
     }
@@ -25,12 +25,8 @@ public class OrientedPair extends TradingPair {
         return isReversed;
     }
 
-    public TradingPair getSymbol() {
-        if (isReversed) {
-            return new TradingPair(destination, source, quantityScale, amountScale);
-        } else {
-            return this;
-        }
+    public String getSymbol() {
+            return isReversed? String.format("%s_%s", destination, source):String.format("%s_%s", source, destination);
     }
 
     @Override

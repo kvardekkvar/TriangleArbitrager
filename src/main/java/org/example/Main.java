@@ -1,16 +1,19 @@
 package org.example;
 
 import org.example.API.PoloniexApi;
+import org.example.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 
+import static org.example.util.Constants.NORMAL_STATE;
+
 public class Main {
 
     public static boolean RESTART_NEEDED = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         while (true) {
             RESTART_NEEDED = false;
@@ -22,27 +25,38 @@ public class Main {
                     "  \"symbols\": [\"all\"]\n" +
                     "}\n";
             poloniexApi.sendPublic(symbolsRequest);
+            Thread.sleep(10000);
 
-            List<TradingPair> subscriptions = new ArrayList<>();
+            List<String> subscriptions = new ArrayList<>();
             for (Triangle triangle : MarketData.INSTANCE.getTriangles()) {
-                TradingPair first = triangle.getFirst().getSymbol();
-                TradingPair second = triangle.getSecond().getSymbol();
-                TradingPair third = triangle.getThird().getSymbol();
-                if (!subscriptions.contains(first)) {
-                    subscriptions.add(first);
+                OrientedPair pair1 = triangle.getFirst();
+                OrientedPair pair2 = triangle.getSecond();
+                OrientedPair pair3 = triangle.getThird();
+                if (!pair1.getState().equals(NORMAL_STATE) || !pair2.getState().equals(NORMAL_STATE) || !pair3.getState().equals(NORMAL_STATE)){
+                    continue;
                 }
-                if (!subscriptions.contains(second)) {
-                    subscriptions.add(second);
+
+                String firstSymbol = pair1.getSymbol();
+                String secondSymbol = pair2.getSymbol();
+                String thirdSymbol = pair3.getSymbol();
+
+                if (!subscriptions.contains(firstSymbol)) {
+                    subscriptions.add(firstSymbol);
                 }
-                if (!subscriptions.contains(third)) {
-                    subscriptions.add(third);
+                if (!subscriptions.contains(secondSymbol)) {
+                    subscriptions.add(secondSymbol);
                 }
+                if (!subscriptions.contains(thirdSymbol)) {
+                    subscriptions.add(thirdSymbol);
+                }
+                //System.out.printf("%s \n %s \n%s \n", firstSymbol, secondSymbol, thirdSymbol);
+
             }
 
 
-            for (TradingPair pair : subscriptions) {
+            for (String symbol : subscriptions) {
                 String bookRequest = String.format(
-                        "{\n\"event\": \"subscribe\",\n \"channel\": [\"book\"],\n \"symbols\": [\"%s\"]\n}\n", pair.toString()
+                        "{\n\"event\": \"subscribe\",\n \"channel\": [\"book\"],\n \"symbols\": [\"%s\"]\n}\n", symbol
                 );
                 poloniexApi.sendPublic(bookRequest);
             }
