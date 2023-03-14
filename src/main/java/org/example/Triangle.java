@@ -2,6 +2,12 @@ package org.example;
 
 import org.example.util.Constants;
 
+import java.awt.print.Book;
+import java.util.HashMap;
+
+import static org.example.util.Constants.ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS;
+import static org.example.util.Constants.AMOUNT_OF_BTC_TO_TRADE;
+
 public class Triangle {
 
 
@@ -73,35 +79,33 @@ public class Triangle {
         Asset asset2 = second.getSource();
         Asset asset3 = third.getSource();
 
+        BookEntry entry1 = marketData.getBookEntryByPair(asset1,asset2);
+        BookEntry entry2 = marketData.getBookEntryByPair(asset2, asset3);
+        BookEntry entry3 = marketData.getBookEntryByPair(asset1, asset3);
 
-        //get prices from marketData
-        //price_i is money received when selling 1 unit of asset_i (denominated in base of asset_i, asset_{i+1} pair)
-        /*
-        double price1 = marketData.getPriceFromPair(asset1, asset2);
-        double price2 = marketData.getPriceFromPair(asset2, asset3);
-        double price3 = marketData.getPriceFromPair(asset3, asset1);
-            WAS WRONG
-            */
 
-        double price1 = first.isReversed? 1/ marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
-        double price2 = second.isReversed? 1/ marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
-        double price3 = third.isReversed? 1/ marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
+
+        long timestamp1 = entry1.getTimestampWhenUpdated();
+        long timestamp2 = entry2.getTimestampWhenUpdated();
+        long timestamp3 = entry3.getTimestampWhenUpdated();
+        long timestamp = System.currentTimeMillis();
+
+        if ((timestamp - timestamp1 > ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)
+                || (timestamp - timestamp2 > ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)
+                || (timestamp - timestamp3 > ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)) {
+            return false;
+        }
+
+        double price1 = first.isReversed ? 1 / marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
+        double price2 = second.isReversed ? 1 / marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
+        double price3 = third.isReversed ? 1 / marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
 
         if (price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1) {
             //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
             return false;
         }
 
-        // NOT SURE what it is
-        /*double amount1 = marketData.getAmountFromPair(asset1, asset2);
-        double amount2 = marketData.getAmountFromPair(asset2, asset3);
-        double amount3 = marketData.getAmountFromPair(asset3, asset1);
-
-
-         amountOfBTCToUse = min(min(amount1, amount2 * price1), amount3 * price1 * price2);
-
-         */
-        double amountOfBTCToUse = 0.004;
+        double amountOfBTCToUse = AMOUNT_OF_BTC_TO_TRADE;
 
         boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
                 amountOfBTCToUse * price1 < asset2.getMinAmount() ||
@@ -118,7 +122,7 @@ public class Triangle {
         this.amountToTrade2 = second.isReversed() ? amountOfBTCToUse * price1 * price2 * fee * fee : amountOfBTCToUse * price1 * fee * fee;
         this.amountToTrade3 = third.isReversed() ? amountOfBTCToUse * price1 * price2 * price3 * fee * fee * fee : amountOfBTCToUse * price1 * price2 * fee * fee * fee;
         */
-        this.amountToTrade1 = amountOfBTCToUse * fee ;
+        this.amountToTrade1 = amountOfBTCToUse * fee;
         this.amountToTrade2 = amountToTrade1 * price1 * fee;
         this.amountToTrade3 = amountToTrade2 * price2 * fee;
 

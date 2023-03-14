@@ -40,7 +40,7 @@ public class WebsocketClientEndpoint {
      * Callback hook for Connection close events.
      *
      * @param userSession the userSession which is getting closed.
-     * @param reason the reason for connection close
+     * @param reason      the reason for connection close
      */
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
@@ -68,11 +68,12 @@ public class WebsocketClientEndpoint {
 
 
     @OnError
-    public void onError(Session session, Throwable t){
+    public void onError(Session session, Throwable t) {
         System.out.println(t.toString());
         t.printStackTrace();
         System.out.println(Arrays.toString(t.getStackTrace()));
     }
+
     /**
      * register message handler
      *
@@ -85,10 +86,12 @@ public class WebsocketClientEndpoint {
     /**
      * Send a message.
      *
-     * @param message  message text
+     * @param message message text
      */
     public void sendMessage(String message) {
-        this.userSession.getAsyncRemote().sendText(message);
+        if (userSession != null) {
+            this.userSession.getAsyncRemote().sendText(message);
+        }
     }
 
 }

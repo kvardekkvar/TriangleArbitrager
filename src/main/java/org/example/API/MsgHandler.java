@@ -20,10 +20,10 @@ public class MsgHandler implements MessageHandler {
 
     private PoloniexApi api;
 
+    Gson gson = new Gson();
 
     public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
         MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);
-        Gson gson = new Gson();
         return gson.toJson(orderRequest);
     }
 
@@ -69,7 +69,16 @@ public class MsgHandler implements MessageHandler {
 
     public void handleMessage(String message) {
 
-        Gson gson = new Gson();
+        if (message.contains("error")) {
+            System.out.println(message);
+        }
+        if (message.contains("code")) {
+            System.out.println(message);
+        }
+        if (message.contains("message")) {
+            System.out.println(message);
+        }
+
 
         SymbolsResponse symbolsResponse;
         SubscriptionResponse subscriptionResponse;
@@ -77,30 +86,27 @@ public class MsgHandler implements MessageHandler {
 
         try {
             bookResponse = gson.fromJson(message, BookResponse.class);
-            if (bookResponse.getData().get(0).getAsks().size() > 0) {
+            if (bookResponse != null &&
+                    bookResponse.getData() != null &&
+                    bookResponse.getData().get(0) != null &&
+                    bookResponse.getData().get(0).getAsks() != null &&
+                    bookResponse.getData().get(0).getAsks().size() > 0) {
 
                 BookData data = bookResponse.getData().get(0);
                 TradingPair pair = marketData.findTradingPairBySymbol(data.getSymbol());
 
                 List<List<String>> asks = data.getAsks();
                 List<List<String>> bids = data.getBids();
-                double askPrice;
-                double askAmount;
-                double bidPrice;
-                double bidAmount;
 
                 //4 lines below throw IndexOutOfBounds when trading is stopped by Poloniex and asks and bids lists come empty
-                //price to buy destination
-                askPrice = Double.parseDouble(asks.get(0).get(0));
-                askAmount = Double.parseDouble(asks.get(0).get(1));
+                double askPrice = Double.parseDouble(asks.get(0).get(0));
+                double askAmount = Double.parseDouble(asks.get(0).get(1));
 
-                //price to buy source
-                bidPrice = Double.parseDouble(bids.get(0).get(0));
-                bidAmount = Double.parseDouble(bids.get(0).get(1));
-
-                //System.out.printf("%s %s %s %s\n",askPrice, askAmount, bidPrice, bidAmount);
+                double bidPrice = Double.parseDouble(bids.get(0).get(0));
+                double bidAmount = Double.parseDouble(bids.get(0).get(1));
 
                 BookEntry order = new BookEntry(pair, bidPrice, bidAmount, askPrice, askAmount);
+                order.setTimestampWhenUpdated(System.currentTimeMillis());
                 marketData.setBookEntryAtTradingPair(pair, order);
 
                 List<List<Triangle>> triangleInfo = marketData.getProfitableTrianglesThatIncludeTradingPair(pair);
@@ -115,6 +121,7 @@ public class MsgHandler implements MessageHandler {
                 }
                 for (Triangle reversedTriangle : profitableReversedTriangles) {
                     //needs implementation
+                    break;
                 }
 
             }
@@ -137,12 +144,12 @@ public class MsgHandler implements MessageHandler {
                         TradingPair pair = TradingPair.fromSymbol(symbol);
                         marketData.addPair(pair);
                     }
-                    marketData.initializeTriangles();
+
                 }
+                marketData.initialize();
             }
         } catch (NullPointerException | JsonSyntaxException ignored) {
         }
-
 
     }
 

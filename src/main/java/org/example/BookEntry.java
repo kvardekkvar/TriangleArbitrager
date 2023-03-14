@@ -3,9 +3,7 @@ package org.example;
 public class BookEntry {
 
 
-
     TradingPair tradingPair;
-
 
 
     double sourcePrice;
@@ -14,6 +12,9 @@ public class BookEntry {
     double destinationPrice;
 
     double destinationAmount;
+
+
+    long timestampWhenUpdated;
 
 
     public BookEntry(TradingPair tradingPair, double sourcePrice, double sourceAmount, double destinationPrice, double destinationAmount) {
@@ -63,4 +64,13 @@ public class BookEntry {
     public void setDestinationAmount(double destinationAmount) {
         this.destinationAmount = destinationAmount;
     }
+
+    public long getTimestampWhenUpdated() {
+        return timestampWhenUpdated;
+    }
+
+    public void setTimestampWhenUpdated(long timestampWhenUpdated) {
+        this.timestampWhenUpdated = timestampWhenUpdated;
+    }
+
 }

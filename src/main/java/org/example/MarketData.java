@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.util.Constants;
 
+import java.awt.print.Book;
 import java.util.*;
 
 public class MarketData {
@@ -45,6 +46,21 @@ public class MarketData {
         return null;
     }
 
+    public void initializeHashtable() {
+        if (dataTable.size() < tradingPairs.size()) {
+
+
+            for (TradingPair pair : tradingPairs) {
+                BookEntry stub = new BookEntry(pair, 0, 0, 0, 0);
+                stub.setTimestampWhenUpdated(0);
+                dataTable.put(pair, stub);
+            }
+            System.out.println("Hashtable initialized");
+        } else {
+            System.out.println("Hashtable already initialized");
+        }
+    }
+
     public void initializeTriangles() {
         if (triangles.size() > 0) {
             System.out.println("Triangles already initialized");
@@ -67,8 +83,13 @@ public class MarketData {
         }
 
         System.out.println("Triangles initialized");
+
     }
 
+    public void initialize(){
+        initializeTriangles();
+        initializeHashtable();
+    }
 
     public List<TradingPair> getTradingPairs() {
         return tradingPairs;
@@ -83,7 +104,18 @@ public class MarketData {
     }
 
     public void setBookEntryAtTradingPair(TradingPair pair, BookEntry entry) {
-        dataTable.put(pair, entry);
+
+        if (!dataTable.containsKey(pair)) {
+            dataTable.put(pair, entry);
+        } else {
+            dataTable.remove(pair);
+            dataTable.put(pair, entry);
+        }
+    }
+
+    public BookEntry getBookEntryByPair(Asset asset1, Asset asset2) {
+        TradingPair pair = findTradingPairBetween(asset1, asset2);
+        return dataTable.get(pair);
     }
 
     public List<List<Triangle>> getProfitableTrianglesThatIncludeTradingPair(TradingPair pair) {
