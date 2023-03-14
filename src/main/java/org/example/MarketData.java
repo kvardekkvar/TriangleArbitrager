@@ -102,20 +102,24 @@ public class MarketData {
         return List.of(profitableTriangles, profitableReversedTriangles);
     }
 
-/**
- * Возвращает цену, по которой можно купить destination, если пара не реверсная
- * Возвращает цену, по которой можно продать source, если пара реверсная
- * Обе цены указаны в единицах destination.
- **/
-    public double getPriceFromPair(Asset source, Asset destination) {
-        TradingPair pair = findTradingPairBetween(source, destination);
-        if (pair.getSource().equals(source)) {
-            // return buy price -- price to buy good immediately
-            return dataTable.get(pair).getDestinationPrice();
-        } else {
-            // return bid price -- price to sell good immediately
-            return dataTable.get(pair).getSourcePrice();
-        }
+    /**
+     * Возвращает цену, по которой можно купить destination, если пара не реверсная
+     * Возвращает цену, по которой можно продать source, если пара реверсная
+     * Обе цены указаны в единицах destination.
+     **/
+
+    public double getGreaterPrice(Asset asset1, Asset asset2) {
+        TradingPair pair = findTradingPairBetween(asset1, asset2);
+        double price1 = dataTable.get(pair).getDestinationPrice();
+        double price2 = dataTable.get(pair).getSourcePrice();
+        return Math.max(price1, price2);
+    }
+
+    public double getLesserPrice(Asset asset1, Asset asset2) {
+        TradingPair pair = findTradingPairBetween(asset1, asset2);
+        double price1 = dataTable.get(pair).getDestinationPrice();
+        double price2 = dataTable.get(pair).getSourcePrice();
+        return Math.max(price1, price2);
     }
 
     public double getAmountFromPair(Asset source, Asset destination) {

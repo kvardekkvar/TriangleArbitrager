@@ -2,10 +2,6 @@ package org.example;
 
 import org.example.util.Constants;
 
-import java.util.HashMap;
-
-import static java.lang.Math.min;
-
 public class Triangle {
 
 
@@ -80,9 +76,17 @@ public class Triangle {
 
         //get prices from marketData
         //price_i is money received when selling 1 unit of asset_i (denominated in base of asset_i, asset_{i+1} pair)
+        /*
         double price1 = marketData.getPriceFromPair(asset1, asset2);
         double price2 = marketData.getPriceFromPair(asset2, asset3);
         double price3 = marketData.getPriceFromPair(asset3, asset1);
+            WAS WRONG
+            */
+
+        double price1 = first.isReversed? marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
+        double price2 = second.isReversed? marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
+        double price3 = third.isReversed? marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
+
 
         // needed to deal with the case when two bases coincide
         price1 = first.isReversed() ? 1 / price1 : price1;
@@ -103,7 +107,7 @@ public class Triangle {
          amountOfBTCToUse = min(min(amount1, amount2 * price1), amount3 * price1 * price2);
 
          */
-        double amountOfBTCToUse = 0.005;
+        double amountOfBTCToUse = 0.0005;
 
         boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
                 amountOfBTCToUse * price1 < asset2.getMinAmount() ||
@@ -135,11 +139,6 @@ public class Triangle {
     public boolean isProfitableWhenReversed() {
         // needs implementation
         return false;
-    }
-
-    public void refresh() {
-        System.out.println("refreshing " + this.toString());
-        return;
     }
 
     public double getAmountToTrade1() {

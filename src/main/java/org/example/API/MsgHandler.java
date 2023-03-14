@@ -13,13 +13,10 @@ import org.example.util.Util;
 
 import javax.websocket.MessageHandler;
 import java.util.List;
-import java.util.Random;
 
 public class MsgHandler implements MessageHandler {
 
-    private MarketData marketData = MarketData.INSTANCE;
-
-    private Random random = new Random();
+    private final MarketData marketData = MarketData.INSTANCE;
 
     private PoloniexApi api;
 
@@ -39,22 +36,24 @@ public class MsgHandler implements MessageHandler {
                         "requestBody=%s" +
                         "&signTimestamp=%d", body, timestamp);
 
-        String signature = crypto.getSignature(request);
-        return signature;
+        return crypto.getSignature(request);
     }
 
     public void sendBuyMessage(OrientedPair pair, double amount) {
         long timestamp = System.currentTimeMillis();
         String symbol = pair.getSymbol().toString();
+
         boolean isAmount = pair.isReversed();
         String side = isAmount ? "BUY" : "SELL";
         String amountOrQuantity = isAmount ? "amount" : "quantity";
         int scale = isAmount ? pair.getAmountScale() : pair.getQuantityScale();
         String amountString = Util.formattedAmount(amount, scale);
-        boolean isSuccess = false;
 
-        while (!isSuccess)
+        boolean isSuccess = false;
+        int cnt = 0;
+        while (!isSuccess && cnt < 10)
             try {
+                cnt++;
                 String body = prepareBuyMessageBody(symbol, amountString, isAmount, side);
                 String signature = prepareBuyMessageSignature(body, timestamp);
 
@@ -63,7 +62,7 @@ public class MsgHandler implements MessageHandler {
                 isSuccess = true;
             } catch (LowBalanceException e) {
                 double currentAmount = Double.parseDouble(amountString);
-                double lesserAmount = currentAmount * 0.993;
+                double lesserAmount = currentAmount * 0.93;
                 amountString = Util.formattedAmount(lesserAmount, scale);
             }
     }
@@ -71,9 +70,6 @@ public class MsgHandler implements MessageHandler {
     public void handleMessage(String message) {
 
         Gson gson = new Gson();
-        //System.out.println("received message\n");
-        //System.out.println(message);
-
 
         SymbolsResponse symbolsResponse;
         SubscriptionResponse subscriptionResponse;
@@ -115,6 +111,7 @@ public class MsgHandler implements MessageHandler {
                     sendBuyMessage(triangle.getFirst(), triangle.getAmountToTrade1());
                     sendBuyMessage(triangle.getSecond(), triangle.getAmountToTrade2());
                     sendBuyMessage(triangle.getThird(), triangle.getAmountToTrade3());
+                    break; //not sure whether I need it here
                 }
                 for (Triangle reversedTriangle : profitableReversedTriangles) {
                     //needs implementation
@@ -127,9 +124,6 @@ public class MsgHandler implements MessageHandler {
 
         try {
             subscriptionResponse = gson.fromJson(message, SubscriptionResponse.class);
-            if (subscriptionResponse.getEvent() != null) {
-                //System.out.println("subscribed to ticker with response: " + subscriptionResponse.getChannel() + subscriptionResponse.getSymbols());
-            }
         } catch (NullPointerException | JsonSyntaxException ignored) {
 
         }
