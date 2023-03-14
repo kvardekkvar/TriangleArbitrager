@@ -23,12 +23,6 @@ public class Main {
                     "}\n";
             poloniexApi.sendPublic(symbolsRequest);
 
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
             List<TradingPair> subscriptions = new ArrayList<>();
             for (Triangle triangle : MarketData.INSTANCE.getTriangles()) {
                 TradingPair first = triangle.getFirst().getSymbol();
