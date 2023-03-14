@@ -103,7 +103,7 @@ public class Triangle {
          amountOfBTCToUse = min(min(amount1, amount2 * price1), amount3 * price1 * price2);
 
          */
-        double amountOfBTCToUse = 0.0002;
+        double amountOfBTCToUse = 0.005;
 
         boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
                 amountOfBTCToUse * price1 < asset2.getMinAmount() ||
@@ -115,9 +115,15 @@ public class Triangle {
         }
 
         double fee = (1 - FeeSchedule.getMultiplicatorFee());
+        /*
         this.amountToTrade1 = first.isReversed() ? amountOfBTCToUse * price1 * fee : amountOfBTCToUse * fee;
         this.amountToTrade2 = second.isReversed() ? amountOfBTCToUse * price1 * price2 * fee * fee : amountOfBTCToUse * price1 * fee * fee;
         this.amountToTrade3 = third.isReversed() ? amountOfBTCToUse * price1 * price2 * price3 * fee * fee * fee : amountOfBTCToUse * price1 * price2 * fee * fee * fee;
+        */
+        this.amountToTrade1 = amountOfBTCToUse * price1 * fee;
+        this.amountToTrade2 = amountToTrade1 * price2 * fee;
+        this.amountToTrade3 = amountToTrade2 * price3 * fee;
+
 
         System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
                 first.logPrices(), second.logPrices(), third.logPrices(),
