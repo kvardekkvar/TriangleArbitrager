@@ -1,13 +1,12 @@
 package org.example.API;
 
-import javax.websocket.SendResult;
 import java.net.URI;
 
 public class PoloniexApi {
 
     private final WebsocketClientEndpoint publicWebsocket;
 
-    private final WebsocketClientEndpoint privateWebsocket;
+    //private final WebsocketClientEndpoint privateWebsocket;
 
     private final RestApiClient privateRest;
     public PoloniexApi() {
@@ -15,24 +14,27 @@ public class PoloniexApi {
         URI privateEndpoint = URI.create("wss://ws.poloniex.com/ws/private");
 
         this.publicWebsocket = new WebsocketClientEndpoint(publicEndpoint);
-        this.privateWebsocket = new WebsocketClientEndpoint(privateEndpoint);
+        //this.privateWebsocket = new WebsocketClientEndpoint(privateEndpoint);
 
         MsgHandler messageHandler = new MsgHandler();
         messageHandler.setApi(this);
         publicWebsocket.addMessageHandler(messageHandler);
+        /*
         MsgHandler messageHandler2 = new MsgHandler();
         messageHandler2.setApi(this);
         privateWebsocket.addMessageHandler(messageHandler2);
-
+        */
         this.privateRest = new RestApiClient();
     }
 
     public void send(String data, boolean isPublic) {
         if (isPublic) {
             publicWebsocket.sendMessage(data);
-        } else {
+        }
+        /*else {
             privateWebsocket.sendMessage(data);
         }
+         */
     }
 
     public void sendPrivate(String data) {

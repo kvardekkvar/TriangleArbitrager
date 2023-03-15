@@ -10,7 +10,7 @@ import java.util.Arrays;
 @ClientEndpoint
 public class WebsocketClientEndpoint {
 
-    Session userSession = null;
+    Session userSession;
     private MsgHandler messageHandler;
     private WebSocketContainer container;
     private URI endpointURI;
@@ -19,7 +19,7 @@ public class WebsocketClientEndpoint {
         try {
             this.endpointURI = endpointURI;
             container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(this, endpointURI);
+            userSession = container.connectToServer(this, endpointURI);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -56,6 +56,7 @@ public class WebsocketClientEndpoint {
      */
     @OnMessage
     public void onMessage(String message) {
+        //System.out.println(message);
         if (this.messageHandler != null) {
             this.messageHandler.handleMessage(message);
         }
@@ -89,7 +90,9 @@ public class WebsocketClientEndpoint {
      * @param message message text
      */
     public void sendMessage(String message) {
+        //System.out.println( message);
         if (userSession != null) {
+            //System.out.println("Session not null");
             this.userSession.getAsyncRemote().sendText(message);
         }
     }

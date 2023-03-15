@@ -6,7 +6,6 @@ import org.example.*;
 import org.example.models.book_request.BookData;
 import org.example.models.requests.MarketOrderRequest;
 import org.example.models.responses.BookResponse;
-import org.example.models.responses.SubscriptionResponse;
 import org.example.models.responses.SymbolsResponse;
 import org.example.models.symbols_request.Symbol;
 import org.example.util.Util;
@@ -81,13 +80,12 @@ public class MsgHandler implements MessageHandler {
 
 
         SymbolsResponse symbolsResponse;
-        SubscriptionResponse subscriptionResponse;
         BookResponse bookResponse;
 
         try {
             bookResponse = gson.fromJson(message, BookResponse.class);
             if (bookResponse != null &&
-                    bookResponse.getData() != null &&
+                    bookResponse.getChannel().equals("book") &&
                     bookResponse.getData().get(0) != null &&
                     bookResponse.getData().get(0).getAsks() != null &&
                     bookResponse.getData().get(0).getAsks().size() > 0) {
@@ -129,15 +127,10 @@ public class MsgHandler implements MessageHandler {
 
         }
 
-        try {
-            subscriptionResponse = gson.fromJson(message, SubscriptionResponse.class);
-        } catch (NullPointerException | JsonSyntaxException ignored) {
-
-        }
 
         try {
             symbolsResponse = gson.fromJson(message, SymbolsResponse.class);
-            if (symbolsResponse.getData() != null) {
+            if (symbolsResponse.getChannel().equals("symbols") && symbolsResponse.getData() != null) {
                 List<List<Symbol>> symbols2DArray = symbolsResponse.getData();
                 for (List<Symbol> symbolRow : symbols2DArray) {
                     for (Symbol symbol : symbolRow) {
