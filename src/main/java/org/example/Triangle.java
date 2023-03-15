@@ -32,7 +32,7 @@ public class Triangle {
     private double price1;
     private double price2;
     private double price3;
-    private MarketData marketData;
+    private MarketData marketData = MarketData.INSTANCE;
     private double amountOfBTCToUse;
 
     public Triangle(TradingPair first, TradingPair second, TradingPair third) {
@@ -61,6 +61,14 @@ public class Triangle {
         this.first = oriented1;
         this.second = oriented2;
         this.third = oriented3;
+
+        asset1 = first.getSource(); // BTC
+        asset2 = second.getSource();
+        asset3 = third.getSource();
+
+        entry1 = marketData.getBookEntryByPair(asset1, asset2);
+        entry2 = marketData.getBookEntryByPair(asset2, asset3);
+        entry3 = marketData.getBookEntryByPair(asset1, asset3);
     }
 
     public boolean isReverseOfPairNotNeeded(TradingPair one, TradingPair other) {
@@ -89,12 +97,9 @@ public class Triangle {
         long timestamp3 = entry3.getTimestampWhenUpdated();
         long timestamp = System.currentTimeMillis();
 
-        if ((timestamp - timestamp1 > ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)
-                || (timestamp - timestamp2 > ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)
-                || (timestamp - timestamp3 > ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)) {
-            return false;
-        }
-        return true;
+        return (timestamp - timestamp1 <= ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)
+                && (timestamp - timestamp2 <= ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS)
+                && (timestamp - timestamp3 <= ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS);
     }
 
 
@@ -103,11 +108,9 @@ public class Triangle {
         price2 = second.isReversed ? 1 / marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
         price3 = third.isReversed ? 1 / marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
 
-        if (price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1) {
-            //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
-            return false;
-        }
-        return true;
+        //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
+
+        return !(price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1);
     }
 
     public boolean triangleAmountsAreGreaterThanMinimum() {
@@ -122,24 +125,11 @@ public class Triangle {
                 amountOfBTCToUse * price1 < asset2.getMinAmount() ||
                 amountOfBTCToUse * (price1 * price2) < asset3.getMinAmount();
 
-        if (amountLimitation) {
-            return false;
-        }
-        return true;
+        return !amountLimitation;
     }
 
     public boolean isProfitable() {
-        marketData = MarketData.INSTANCE;
 
-        //get assets of triangle
-        asset1 = first.getSource(); // BTC
-        assert asset1.equals(Constants.BTC);
-        asset2 = second.getSource();
-        asset3 = third.getSource();
-
-        entry1 = marketData.getBookEntryByPair(asset1, asset2);
-        entry2 = marketData.getBookEntryByPair(asset2, asset3);
-        entry3 = marketData.getBookEntryByPair(asset1, asset3);
 
         if (!triangleIsNew()) {
             return false;
