@@ -107,13 +107,21 @@ public class MarketData {
 
         BookEntry oldEntry = dataTable.get(pair);
 
-        oldEntry.setTimestampWhenUpdated(entry.getTimestampWhenUpdated());
+        oldEntry.setTimestampWhenUpdated(System.currentTimeMillis());
         oldEntry.setDestinationAmount(entry.getDestinationAmount());
         oldEntry.setDestinationPrice(entry.getDestinationPrice());
         oldEntry.setSourceAmount(entry.getSourceAmount());
         oldEntry.setSourcePrice(entry.getSourcePrice());
     }
+    public void setBookEntryAtTradingPair(TradingPair pair, double bidPrice, double bidAmount, double askPrice, double askAmount) {
 
+        BookEntry oldEntry = dataTable.get(pair);
+        oldEntry.setTimestampWhenUpdated(System.currentTimeMillis());
+        oldEntry.setDestinationAmount(askAmount);
+        oldEntry.setDestinationPrice(askPrice);
+        oldEntry.setSourceAmount(bidAmount);
+        oldEntry.setSourcePrice(bidPrice);
+    }
     public BookEntry getBookEntryByPair(Asset asset1, Asset asset2) {
         TradingPair pair = findTradingPairBetween(asset1, asset2);
         return dataTable.get(pair);

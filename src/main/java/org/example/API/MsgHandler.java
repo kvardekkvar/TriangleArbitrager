@@ -68,17 +68,6 @@ public class MsgHandler implements MessageHandler {
 
     public void handleMessage(String message) {
 
-        if (message.contains("error")) {
-            System.out.println(message);
-        }
-        if (message.contains("code")) {
-            System.out.println(message);
-        }
-        if (message.contains("message")) {
-            System.out.println(message);
-        }
-
-
         SymbolsResponse symbolsResponse;
         BookResponse bookResponse;
 
@@ -86,8 +75,6 @@ public class MsgHandler implements MessageHandler {
             bookResponse = gson.fromJson(message, BookResponse.class);
             if (bookResponse != null &&
                     bookResponse.getChannel().equals("book") &&
-                    bookResponse.getData().get(0) != null &&
-                    bookResponse.getData().get(0).getAsks() != null &&
                     bookResponse.getData().get(0).getAsks().size() > 0) {
 
                 BookData data = bookResponse.getData().get(0);
@@ -103,9 +90,7 @@ public class MsgHandler implements MessageHandler {
                 double bidPrice = Double.parseDouble(bids.get(0).get(0));
                 double bidAmount = Double.parseDouble(bids.get(0).get(1));
 
-                BookEntry order = new BookEntry(pair, bidPrice, bidAmount, askPrice, askAmount);
-                order.setTimestampWhenUpdated(System.currentTimeMillis());
-                marketData.setBookEntryAtTradingPair(pair, order);
+                marketData.setBookEntryAtTradingPair(pair, bidPrice, bidAmount, askPrice, askAmount);
 
                 List<List<Triangle>> triangleInfo = marketData.getProfitableTrianglesThatIncludeTradingPair(pair);
                 List<Triangle> profitableTriangles = triangleInfo.get(0);
@@ -115,13 +100,13 @@ public class MsgHandler implements MessageHandler {
                     sendBuyMessage(triangle.getFirst(), triangle.getAmountToTrade1());
                     sendBuyMessage(triangle.getSecond(), triangle.getAmountToTrade2());
                     sendBuyMessage(triangle.getThird(), triangle.getAmountToTrade3());
-                    break; //not sure whether I need it here
+                    break;
                 }
                 for (Triangle reversedTriangle : profitableReversedTriangles) {
                     //needs implementation
                     break;
                 }
-
+                return;
             }
         } catch (IndexOutOfBoundsException | NullPointerException | JsonSyntaxException ignored) {
 
