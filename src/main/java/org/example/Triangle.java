@@ -18,9 +18,9 @@ public class Triangle {
     private final OrientedPair third;
 
 
-    private Asset asset1;
-    private Asset asset2;
-    private Asset asset3;
+    private final Asset asset1;
+    private final Asset asset2;
+    private final Asset asset3;
     private double amountToTrade1; // Amount of BTC to sell
     private double amountToTrade2; // Amount of X to sell
     private double amountToTrade3; // Amount of Y to sell
@@ -62,9 +62,9 @@ public class Triangle {
         this.second = oriented2;
         this.third = oriented3;
 
-        asset1 = first.getSource(); // BTC
-        asset2 = second.getSource();
-        asset3 = third.getSource();
+        asset1 = this.first.getSource(); // BTC
+        asset2 = this.second.getSource();
+        asset3 = this.third.getSource();
 
         entry1 = marketData.getBookEntryByPair(asset1, asset2);
         entry2 = marketData.getBookEntryByPair(asset2, asset3);

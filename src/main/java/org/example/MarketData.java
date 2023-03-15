@@ -87,8 +87,8 @@ public class MarketData {
     }
 
     public void initialize() {
-        initializeTriangles();
         initializeHashtable();
+        initializeTriangles();
     }
 
     public List<TradingPair> getTradingPairs() {
@@ -105,12 +105,13 @@ public class MarketData {
 
     public void setBookEntryAtTradingPair(TradingPair pair, BookEntry entry) {
 
-        if (!dataTable.containsKey(pair)) {
-            dataTable.put(pair, entry);
-        } else {
-            dataTable.remove(pair);
-            dataTable.put(pair, entry);
-        }
+        BookEntry oldEntry = dataTable.get(pair);
+
+        oldEntry.setTimestampWhenUpdated(entry.getTimestampWhenUpdated());
+        oldEntry.setDestinationAmount(entry.getDestinationAmount());
+        oldEntry.setDestinationPrice(entry.getDestinationPrice());
+        oldEntry.setSourceAmount(entry.getSourceAmount());
+        oldEntry.setSourcePrice(entry.getSourcePrice());
     }
 
     public BookEntry getBookEntryByPair(Asset asset1, Asset asset2) {
