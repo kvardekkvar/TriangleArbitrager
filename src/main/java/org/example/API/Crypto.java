@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Crypto {
-
+    public static final Crypto INSTANCE = new Crypto();
     public static final String API_KEY = getApiKey();
 
     public static final String SECRET_KEY = getSecretKey();

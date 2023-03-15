@@ -27,7 +27,7 @@ public class MsgHandler implements MessageHandler {
     }
 
     public String prepareBuyMessageSignature(String body, long timestamp) {
-        Crypto crypto = new Crypto();
+        Crypto crypto = Crypto.INSTANCE;
 
         String request = String.format(
                 "POST\n" +
