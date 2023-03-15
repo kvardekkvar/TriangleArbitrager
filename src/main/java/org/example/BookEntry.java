@@ -3,18 +3,18 @@ package org.example;
 public class BookEntry {
 
 
-    TradingPair tradingPair;
+    private TradingPair tradingPair;
 
 
-    double sourcePrice;
-    double sourceAmount;
+    private double sourcePrice;
+    private double sourceAmount;
 
-    double destinationPrice;
+    private double destinationPrice;
 
-    double destinationAmount;
+    private double destinationAmount;
 
 
-    long timestampWhenUpdated;
+    private long timestampWhenUpdated;
 
 
     public BookEntry(TradingPair tradingPair, double sourcePrice, double sourceAmount, double destinationPrice, double destinationAmount) {

@@ -86,7 +86,7 @@ public class MarketData {
 
     }
 
-    public void initialize(){
+    public void initialize() {
         initializeTriangles();
         initializeHashtable();
     }
@@ -154,6 +154,25 @@ public class MarketData {
             return dataTable.get(pair).getDestinationAmount();
         } else {
             return dataTable.get(pair).getSourceAmount();
+        }
+    }
+
+    public double getAskAmount(Asset base, Asset quote) {
+        TradingPair pair = findTradingPairBetween(base, quote);
+        if(pair.getSource().equals(base)){
+            return dataTable.get(pair).getDestinationAmount();
+        } else {
+            return dataTable.get(pair).getSourceAmount();
+        }
+
+    }
+
+    public double getBidAmount(Asset base, Asset quote) {
+        TradingPair pair = findTradingPairBetween(base, quote);
+        if(pair.getSource().equals(base)){
+            return dataTable.get(pair).getSourceAmount();
+        } else {
+            return dataTable.get(pair).getDestinationAmount();
         }
 
     }

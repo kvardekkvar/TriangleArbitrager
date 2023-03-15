@@ -90,7 +90,7 @@ public class TradingPair {
         TradingPair pair = data.findTradingPairBetween(source, destination);
         BookEntry entry = data.getDataTable().get(pair);
         if (entry != null) {
-            result = String.format("pair %s, price1: %s, price2: %s", this, entry.sourcePrice, entry.destinationPrice);
+            result = String.format("pair %s, price1: %s, price2: %s", this, entry.getSourcePrice(), entry.getDestinationPrice());
         } else {
             System.out.printf("ololo %s %s %s\n", source, destination, this);
         }
