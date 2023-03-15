@@ -2,55 +2,49 @@ package org.example;
 
 import org.example.util.Constants;
 
-import java.awt.print.Book;
 import java.util.*;
 
 public class MarketData {
     public static MarketData INSTANCE = new MarketData();
 
 
-    private final List<TradingPair> tradingPairs;
 
+    private final HashMap<String, TradingPair> tradingPairsMap;
     private final List<Triangle> triangles;
     private final HashMap<TradingPair, BookEntry> dataTable;
 
     private MarketData() {
-        tradingPairs = new ArrayList<>();
+        //tradingPairs = new ArrayList<>();
+        tradingPairsMap = new HashMap<>();
         triangles = new ArrayList<>();
         dataTable = new HashMap<>();
     }
 
     public void addPair(TradingPair pair) {
-        if (findTradingPairBetween(pair.source, pair.destination) == null) {
-            tradingPairs.add(pair);
+        String name = String.format("%s_%s", pair.source, pair.destination);
+        if (!tradingPairsMap.containsKey(name)) {
+            tradingPairsMap.put(name, pair);
         }
     }
 
     public TradingPair findTradingPairBetween(Asset first, Asset second) {
-        for (TradingPair pair : tradingPairs) {
-            boolean condition = (pair.getSource().equals(first) && pair.getDestination().equals(second)) ||
-                    (pair.getSource().equals(second) && pair.getDestination().equals(first));
-            if (condition) {
-                return pair;
-            }
-        }
-        return null;
+        String name1 = String.format("%s_%s", first.getName(), second.getName());
+        String name2 = String.format("%s_%s", second.getName(), first.getName());
+        if (tradingPairsMap.containsKey(name1)) {
+            return tradingPairsMap.get(name1);
+        } else return tradingPairsMap.getOrDefault(name2, null);
+
     }
 
     public TradingPair findTradingPairBySymbol(String symbol) {
-        for (TradingPair pair : tradingPairs) {
-            if (pair.toString().equals(symbol)) {
-                return pair;
-            }
-        }
-        return null;
+        return tradingPairsMap.getOrDefault(symbol, null);
     }
 
     public void initializeHashtable() {
-        if (dataTable.size() < tradingPairs.size()) {
+        if (dataTable.size() < tradingPairsMap.size()) {
 
 
-            for (TradingPair pair : tradingPairs) {
+            for (TradingPair pair : tradingPairsMap.values()) {
                 BookEntry stub = new BookEntry(pair, 0, 0, 0, 0);
                 stub.setTimestampWhenUpdated(0);
                 dataTable.put(pair, stub);
@@ -68,7 +62,7 @@ public class MarketData {
         }
 
         Asset BTC = Constants.BTC;
-        for (TradingPair pair : tradingPairs) {
+        for (TradingPair pair : tradingPairsMap.values()) {
             Asset source = pair.getSource();
             Asset destination = pair.getDestination();
             if (!source.equals(BTC) && !destination.equals(BTC)) {
@@ -91,9 +85,6 @@ public class MarketData {
         initializeTriangles();
     }
 
-    public List<TradingPair> getTradingPairs() {
-        return tradingPairs;
-    }
 
     public List<Triangle> getTriangles() {
         return triangles;
@@ -113,6 +104,7 @@ public class MarketData {
         oldEntry.setSourceAmount(entry.getSourceAmount());
         oldEntry.setSourcePrice(entry.getSourcePrice());
     }
+
     public void setBookEntryAtTradingPair(TradingPair pair, double bidPrice, double bidAmount, double askPrice, double askAmount) {
 
         BookEntry oldEntry = dataTable.get(pair);
@@ -122,6 +114,7 @@ public class MarketData {
         oldEntry.setSourceAmount(bidAmount);
         oldEntry.setSourcePrice(bidPrice);
     }
+
     public BookEntry getBookEntryByPair(Asset asset1, Asset asset2) {
         TradingPair pair = findTradingPairBetween(asset1, asset2);
         return dataTable.get(pair);
@@ -168,7 +161,7 @@ public class MarketData {
 
     public double getAskAmount(Asset base, Asset quote) {
         TradingPair pair = findTradingPairBetween(base, quote);
-        if(pair.getSource().equals(base)){
+        if (pair.getSource().equals(base)) {
             return dataTable.get(pair).getDestinationAmount();
         } else {
             return dataTable.get(pair).getSourceAmount();
@@ -178,7 +171,7 @@ public class MarketData {
 
     public double getBidAmount(Asset base, Asset quote) {
         TradingPair pair = findTradingPairBetween(base, quote);
-        if(pair.getSource().equals(base)){
+        if (pair.getSource().equals(base)) {
             return dataTable.get(pair).getSourceAmount();
         } else {
             return dataTable.get(pair).getDestinationAmount();
