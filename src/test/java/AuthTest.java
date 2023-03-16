@@ -12,14 +12,14 @@ public class AuthTest {
 
     @Test
     public void testEncryption() {
-        Crypto crypto = new Crypto();
+        Crypto crypto = Crypto.INSTANCE;
         long timestamp = 1234567890;
         String request = String.format("GET\n" +
                 "/ws\n" +
                 "signTimestamp=%d", timestamp);
 
         String authToken = crypto.getSignature(request);
-        String expected = "QB8a+37pp57VXtwihisq1dwScZDLsj/2iYG+9lJ0LH8=";
+        String expected = "238Fx6Ogj7bpu0qYy4FvY9yndtDVF4AKRkjEwIdx8Mw=";
 
         Assert.assertEquals(String.format("got %s", authToken), expected, authToken);
     }

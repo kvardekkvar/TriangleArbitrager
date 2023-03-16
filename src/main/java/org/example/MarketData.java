@@ -12,11 +12,14 @@ public class MarketData {
     private final List<Triangle> triangles;
     private final HashMap<TradingPair, BookEntry> dataTable;
 
+    private final HashMap<String, List<Triangle>> trianglesByPair;
+
     private MarketData() {
         //tradingPairs = new ArrayList<>();
         tradingPairsMap = new HashMap<>();
         triangles = new LinkedList<>();
         dataTable = new HashMap<>();
+        trianglesByPair = new HashMap<>();
     }
 
     public void addPair(TradingPair pair) {
@@ -39,6 +42,21 @@ public class MarketData {
         return tradingPairsMap.getOrDefault(symbol, null);
     }
 
+    public void addTriangleToHashMap(String key, Triangle triangle) {
+        if (trianglesByPair.containsKey(key)) {
+            List<Triangle> list = trianglesByPair.get(key);
+            if (!list.contains(triangle)) {
+                list.add(triangle);
+            }
+            trianglesByPair.put(key, list);
+
+        } else {
+            List<Triangle> list = new LinkedList<>();
+            list.add(triangle);
+            trianglesByPair.put(key, list);
+        }
+    }
+
     public void initializeHashtable() {
         if (dataTable.size() < tradingPairsMap.size()) {
 
@@ -55,7 +73,7 @@ public class MarketData {
     }
 
     public void initializeTriangles() {
-        if (triangles.size() > 0) {
+        if (trianglesByPair.size() > 0) {
             System.out.println("Triangles already initialized");
             return;
         }
@@ -71,6 +89,9 @@ public class MarketData {
                 if (first != null && third != null) {
                     Triangle triangle = new Triangle(first, second, third);
                     triangles.add(triangle);
+                    addTriangleToHashMap(triangle.getFirst().getSymbol(), triangle);
+                    addTriangleToHashMap(triangle.getSecond().getSymbol(), triangle);
+                    addTriangleToHashMap(triangle.getThird().getSymbol(), triangle);
                 }
             }
         }
@@ -119,23 +140,22 @@ public class MarketData {
         return dataTable.get(pair);
     }
 
-    public List<List<Triangle>> getProfitableTriangle(TradingPair pair) {
+    public List<Triangle> getTrianglesHavingEdge(String symbol) {
+        return trianglesByPair.get(symbol);
+    }
+
+    public List<List<Triangle>> getProfitableTriangleHavingEdge(TradingPair pair) {
         List<Triangle> profitableTriangles = new LinkedList<>();
         List<Triangle> profitableReversedTriangles = new LinkedList<>();
 
-        for (Triangle triangle : triangles) {
+        for (Triangle triangle : getTrianglesHavingEdge(pair.getSymbol())) {
 
-            if (triangle.getThird().equals(pair) ||
-                    triangle.getSecond().equals(pair) ||
-                    triangle.getFirst().equals(pair)) {
-
-                if (triangle.isProfitable()) {
-                    profitableTriangles.add(triangle);
-                    break;
-                } else if (triangle.isProfitableWhenReversed()) {
-                    profitableReversedTriangles.add(triangle);
-                    break;
-                }
+            if (triangle.isProfitable()) {
+                profitableTriangles.add(triangle);
+                break;
+            } else if (triangle.isProfitableWhenReversed()) {
+                profitableReversedTriangles.add(triangle);
+                break;
             }
         }
         return List.of(profitableTriangles, profitableReversedTriangles);
