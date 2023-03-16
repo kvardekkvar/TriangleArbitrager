@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.API.Crypto;
 import org.example.API.PoloniexApi;
 import org.example.util.Constants;
 
@@ -19,6 +20,7 @@ public class Main {
         while (true) {
             RESTART_NEEDED = false;
             PoloniexApi poloniexApi = new PoloniexApi();
+            Crypto crypto = new Crypto();
 
             String symbolsRequest = "{\n" +
                     "  \"event\": \"subscribe\",\n" +
