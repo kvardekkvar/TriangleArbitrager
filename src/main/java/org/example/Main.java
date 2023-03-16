@@ -4,6 +4,7 @@ import org.example.API.PoloniexApi;
 import org.example.util.Constants;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 
@@ -25,9 +26,9 @@ public class Main {
                     "  \"symbols\": [\"all\"]\n" +
                     "}\n";
             poloniexApi.sendPublic(symbolsRequest);
-            Thread.sleep(10000);
+            //Thread.sleep(5000);
 
-            List<String> subscriptions = new ArrayList<>();
+            List<String> subscriptions = new LinkedList<>();
             for (Triangle triangle : MarketData.INSTANCE.getTriangles()) {
                 OrientedPair pair1 = triangle.getFirst();
                 OrientedPair pair2 = triangle.getSecond();

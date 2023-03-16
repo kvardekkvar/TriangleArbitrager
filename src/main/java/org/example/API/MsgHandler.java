@@ -75,6 +75,7 @@ public class MsgHandler implements MessageHandler {
             bookResponse = gson.fromJson(message, BookResponse.class);
             if (bookResponse != null &&
                     bookResponse.getChannel().equals("book") &&
+                    bookResponse.getData() != null &&
                     bookResponse.getData().get(0).getAsks().size() > 0) {
 
                 BookData data = bookResponse.getData().get(0);
@@ -108,7 +109,7 @@ public class MsgHandler implements MessageHandler {
                 }
                 return;
             }
-        } catch (IndexOutOfBoundsException | NullPointerException | JsonSyntaxException ignored) {
+        } catch (JsonSyntaxException ignored) {
 
         }
 
