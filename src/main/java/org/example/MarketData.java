@@ -8,7 +8,6 @@ public class MarketData {
     public static MarketData INSTANCE = new MarketData();
 
 
-
     private final HashMap<String, TradingPair> tradingPairsMap;
     private final List<Triangle> triangles;
     private final HashMap<TradingPair, BookEntry> dataTable;
@@ -120,16 +119,22 @@ public class MarketData {
         return dataTable.get(pair);
     }
 
-    public List<List<Triangle>> getProfitableTrianglesThatIncludeTradingPair(TradingPair pair) {
+    public List<List<Triangle>> getProfitableTriangle(TradingPair pair) {
         List<Triangle> profitableTriangles = new LinkedList<>();
         List<Triangle> profitableReversedTriangles = new LinkedList<>();
 
         for (Triangle triangle : triangles) {
-            if (triangle.getSecond().equals(pair) || triangle.getFirst().equals(pair) || triangle.getThird().equals(pair)) {
+
+            if (triangle.getThird().equals(pair) ||
+                    triangle.getSecond().equals(pair) ||
+                    triangle.getFirst().equals(pair)) {
+
                 if (triangle.isProfitable()) {
                     profitableTriangles.add(triangle);
+                    break;
                 } else if (triangle.isProfitableWhenReversed()) {
                     profitableReversedTriangles.add(triangle);
+                    break;
                 }
             }
         }

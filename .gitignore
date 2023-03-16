@@ -40,3 +40,4 @@ build/
 
 ### txt files###
 *.txt
+visualvm*

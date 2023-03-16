@@ -19,12 +19,16 @@ public class TradingPair {
 
     String state;
 
-    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale, String state) {
+
+    String symbol;
+
+    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale, String state, String symbol) {
         this.source = source;
         this.destination = destination;
         this.quantityScale = quantityScale;
         this.amountScale = amountScale;
         this.state = state;
+        this.symbol=symbol;
     }
 
     public static TradingPair fromSymbol(Symbol symbol) {
@@ -33,7 +37,7 @@ public class TradingPair {
         Asset destination = Asset.fromSymbol(symbol, false);
         return new TradingPair(source, destination,
                 limit.getQuantityScale(), limit.getAmountScale(),
-                symbol.getState());
+                symbol.getState(), symbol.getSymbol());
     }
 
     public String getState() {
@@ -72,7 +76,7 @@ public class TradingPair {
     }
 
     public boolean equals(TradingPair other) {
-        return this.toString().equals(other.toString());
+        return this.symbol.equals(other.symbol);
     }
 
     public void buy(Asset asset) {
@@ -82,6 +86,13 @@ public class TradingPair {
             System.out.println("buying destination");
         }
 
+    }
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public String logPrices() {

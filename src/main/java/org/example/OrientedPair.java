@@ -6,8 +6,8 @@ public class OrientedPair extends TradingPair {
     Asset baseCurrency;
     boolean isReversed;
 
-    public OrientedPair(Asset source, Asset destination, int quantityScale, int amountScale, String state) {
-        super(source, destination, quantityScale, amountScale, state);
+    public OrientedPair(Asset source, Asset destination, int quantityScale, int amountScale, String state, String symbol) {
+        super(source, destination, quantityScale, amountScale, state, symbol);
         baseCurrency = destination;
         isReversed = false;
     }

@@ -93,7 +93,7 @@ public class MsgHandler implements MessageHandler {
 
                 marketData.setBookEntryAtTradingPair(pair, bidPrice, bidAmount, askPrice, askAmount);
 
-                List<List<Triangle>> triangleInfo = marketData.getProfitableTrianglesThatIncludeTradingPair(pair);
+                List<List<Triangle>> triangleInfo = marketData.getProfitableTriangle(pair);
                 List<Triangle> profitableTriangles = triangleInfo.get(0);
                 List<Triangle> profitableReversedTriangles = triangleInfo.get(1);
 

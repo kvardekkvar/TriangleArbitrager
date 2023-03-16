@@ -14,7 +14,7 @@ public class RestApiTest {
         Asset asset2 = new Asset("USDT", 1);
         MsgHandler handler = new MsgHandler();
         handler.setApi(api);
-        OrientedPair orientedPair = new OrientedPair(asset1, asset2, 0, 0, "NORMAL");
+        OrientedPair orientedPair = new OrientedPair(asset1, asset2, 0, 0, "NORMAL", "BTC_USDT");
         handler.sendBuyMessage(orientedPair, 10000000);
     }
 

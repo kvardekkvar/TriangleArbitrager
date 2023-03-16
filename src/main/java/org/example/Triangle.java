@@ -25,20 +25,20 @@ public class Triangle {
     private double amountToTrade2; // Amount of X to sell
     private double amountToTrade3; // Amount of Y to sell
 
-    private BookEntry entry1;
-    private BookEntry entry2;
-    private BookEntry entry3;
+    private final BookEntry entry1;
+    private final BookEntry entry2;
+    private final BookEntry entry3;
 
     private double price1;
     private double price2;
     private double price3;
-    private MarketData marketData = MarketData.INSTANCE;
+    private final MarketData marketData = MarketData.INSTANCE;
     private double amountOfBTCToUse;
 
     public Triangle(TradingPair first, TradingPair second, TradingPair third) {
-        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination(), first.quantityScale, first.amountScale, first.getState());
-        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination(), second.quantityScale, second.amountScale, second.getState());
-        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination(), third.quantityScale, third.amountScale, third.getState());
+        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination(), first.quantityScale, first.amountScale, first.getState(), first.getSymbol());
+        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination(), second.quantityScale, second.amountScale, second.getState(), second.getSymbol());
+        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination(), third.quantityScale, third.amountScale, third.getState(), third.getSymbol());
 
         boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
         if (isReverseNeeded) {
