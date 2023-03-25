@@ -8,6 +8,7 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -18,6 +19,7 @@ public class Crypto {
 
     public static final String SECRET_KEY = getSecretKey();
 
+    private static final String TOKEN_FILE =  "token-arbitrage.txt";
 
 
     public static final Charset charset = StandardCharsets.UTF_8;
@@ -53,8 +55,8 @@ public class Crypto {
         String apiKey = null;
 
         try {
-            File settings = new File("src/main/resources/token.txt");
-            myReader = new Scanner(settings);
+            InputStream stream = Crypto.class.getClassLoader().getResourceAsStream(TOKEN_FILE);
+            myReader = new Scanner(stream);
             apiKey = myReader.nextLine();
         } catch (Exception ignored) {
 
@@ -69,8 +71,8 @@ public class Crypto {
         String secretKey = null;
 
         try {
-            File settings = new File("src/main/resources/token.txt");
-            myReader = new Scanner(settings);
+            InputStream stream = Crypto.class.getClassLoader().getResourceAsStream(TOKEN_FILE);
+            myReader = new Scanner(stream);
             myReader.nextLine();
             secretKey = myReader.nextLine();
         } catch (Exception ignored) {
