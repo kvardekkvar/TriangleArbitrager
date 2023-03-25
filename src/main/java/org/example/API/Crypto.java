@@ -57,10 +57,6 @@ public class Crypto {
         String apiKey = null;
 
         try {
-<<<<<<< HEAD
-=======
-            //File settings = new File(TOKEN_FILE);
->>>>>>> main
             InputStream stream = Crypto.class.getClassLoader().getResourceAsStream(TOKEN_FILE);
             myReader = new Scanner(stream);
             apiKey = myReader.nextLine();
@@ -77,10 +73,6 @@ public class Crypto {
         String secretKey = null;
 
         try {
-<<<<<<< HEAD
-=======
-            //File settings = new File(TOKEN_FILE);
->>>>>>> main
             InputStream stream = Crypto.class.getClassLoader().getResourceAsStream(TOKEN_FILE);
             myReader = new Scanner(stream);
             myReader.nextLine();
