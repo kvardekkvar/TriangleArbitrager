@@ -39,7 +39,7 @@ public class AuthTest {
 
     @Test
     public void testHmac() {
-        Crypto crypto = new Crypto();
+        Crypto crypto = Crypto.INSTANCE;
         String key = "key";
         String input = "The quick brown fox jumps over the lazy dog";
 
