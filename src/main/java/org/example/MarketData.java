@@ -16,6 +16,7 @@ public class MarketData {
 
     private MarketData() {
         //tradingPairs = new ArrayList<>();
+        //test
         tradingPairsMap = new HashMap<>();
         triangles = new LinkedList<>();
         dataTable = new HashMap<>();
