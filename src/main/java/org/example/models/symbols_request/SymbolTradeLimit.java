@@ -1,12 +1,19 @@
 package org.example.models.symbols_request;
 
-public class SymbolTradeLimit {
+import com.google.gson.annotations.Expose;
 
+public class SymbolTradeLimit {
+    @Expose
     public String symbol;
     public int priceScale;
+
+    @Expose
     public int quantityScale;
+    @Expose
     public int amountScale;
+    @Expose
     public String minQuantity;
+    @Expose
     public String minAmount;
     public String highestBid;
     public String lowestAsk;

@@ -1,6 +1,7 @@
 package org.example.API;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import org.example.*;
 import org.example.models.book_request.BookData;
@@ -19,7 +20,7 @@ public class MsgHandler implements MessageHandler {
 
     private PoloniexApi api;
 
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
         MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);

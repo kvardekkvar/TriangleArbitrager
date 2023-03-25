@@ -24,7 +24,7 @@ public class MarketData {
     }
 
     public void addPair(TradingPair pair) {
-        String name = String.format("%s_%s", pair.source, pair.destination);
+        String name = pair.source + "_" + pair.destination;
         if (!tradingPairsMap.containsKey(name)) {
             tradingPairsMap.put(name, pair);
         }

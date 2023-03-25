@@ -1,15 +1,22 @@
 package org.example.models.symbols_request;
 
+import com.google.gson.annotations.Expose;
+
 public class Symbol {
 
+    @Expose
     private String symbol;
+    @Expose
     private String baseCurrencyName;
+    @Expose
     private String quoteCurrencyName;
     private String displayName;
+    @Expose
     private String state;
     private Long visibleStartTime;
     private Long tradableStartTime;
     private CrossMargin crossMargin;
+    @Expose
     private SymbolTradeLimit symbolTradeLimit;
 
     public String getSymbol() {

@@ -1,11 +1,16 @@
 package org.example.models.book_request;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.List;
 
 public class BookData {
+    @Expose
     private String symbol;
     private long createTime;
+    @Expose
     private List<List<String>> asks;
+    @Expose
     private List<List<String>> bids;
     private long id;
     private long ts;

@@ -1,10 +1,15 @@
 package org.example.models.requests;
 
-public class MarketOrderRequest {
-    private String symbol;
-    private String side;
+import com.google.gson.annotations.Expose;
 
+public class MarketOrderRequest {
+    @Expose
+    private String symbol;
+    @Expose
+    private String side;
+    @Expose
     private String quantity;
+    @Expose
     private String amount;
 
 
