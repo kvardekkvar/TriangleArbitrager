@@ -20,7 +20,7 @@ public class Main {
         while (true) {
             RESTART_NEEDED = false;
             PoloniexApi poloniexApi = new PoloniexApi();
-            Crypto crypto = new Crypto();
+            Crypto crypto = Crypto.INSTANCE;
 
             String symbolsRequest = "{\n" +
                     "  \"event\": \"subscribe\",\n" +

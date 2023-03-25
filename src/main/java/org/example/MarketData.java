@@ -16,6 +16,7 @@ public class MarketData {
 
     private MarketData() {
         //tradingPairs = new ArrayList<>();
+        //test
         tradingPairsMap = new HashMap<>();
         triangles = new LinkedList<>();
         dataTable = new HashMap<>();
@@ -30,8 +31,11 @@ public class MarketData {
     }
 
     public TradingPair findTradingPairBetween(Asset first, Asset second) {
-        String name1 = String.format("%s_%s", first.getName(), second.getName());
-        String name2 = String.format("%s_%s", second.getName(), first.getName());
+        String firstAssetName = first.getName();
+        String secondAssetName = second.getName();
+
+        String name1 = firstAssetName + "_" + secondAssetName;
+        String name2 = secondAssetName + "_" + firstAssetName;
         if (tradingPairsMap.containsKey(name1)) {
             return tradingPairsMap.get(name1);
         } else return tradingPairsMap.getOrDefault(name2, null);
@@ -51,7 +55,7 @@ public class MarketData {
             trianglesByPair.put(key, list);
 
         } else {
-            List<Triangle> list = new LinkedList<>();
+            List<Triangle> list = new ArrayList<>();
             list.add(triangle);
             trianglesByPair.put(key, list);
         }
