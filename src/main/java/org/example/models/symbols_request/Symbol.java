@@ -1,7 +1,9 @@
 package org.example.models.symbols_request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.Expose;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class Symbol {
 
