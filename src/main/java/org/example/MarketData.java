@@ -177,32 +177,16 @@ public class MarketData {
         return dataTable.get(pair).getBidPrice();
     }
 
-    public double getAmountFromPair(Asset source, Asset destination) {
-        TradingPair pair = findTradingPairBetween(source, destination);
-        if (pair.getSource().equals(source)) {
-            return dataTable.get(pair).getAskAmount();
-        } else {
-            return dataTable.get(pair).getBidAmount();
-        }
-    }
-
     public double getAskAmount(Asset base, Asset quote) {
         TradingPair pair = findTradingPairBetween(base, quote);
-        if (pair.getSource().equals(base)) {
-            return dataTable.get(pair).getAskAmount();
-        } else {
-            return dataTable.get(pair).getAskAmount();
-        }
+        return dataTable.get(pair).getAskAmount();
+
 
     }
 
     public double getBidAmount(Asset base, Asset quote) {
         TradingPair pair = findTradingPairBetween(base, quote);
-        if (pair.getSource().equals(base)) {
-            return dataTable.get(pair).getBidAmount();
-        } else {
-            return dataTable.get(pair).getBidAmount();
-        }
+        return dataTable.get(pair).getBidAmount();
 
     }
 }
