@@ -105,9 +105,9 @@ public class Triangle {
 
 
     public boolean trianglePricesAreProfitable() {
-        price1 = first.isReversed() ? 1 / marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
-        price2 = second.isReversed() ? 1 / marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
-        price3 = third.isReversed() ? 1 / marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
+        price1 = first.isReversed() ? 1 / marketData.getAskPrice(asset1, asset2) : marketData.getBidPrice(asset1, asset2);
+        price2 = second.isReversed() ? 1 / marketData.getAskPrice(asset2, asset3) : marketData.getBidPrice(asset2, asset3);
+        price3 = third.isReversed() ? 1 / marketData.getAskPrice(asset3, asset1) : marketData.getBidPrice(asset3, asset1);
 
         //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
 

@@ -165,18 +165,16 @@ public class MarketData {
         return List.of(profitableTriangles, profitableReversedTriangles);
     }
 
-    public double getGreaterPrice(Asset asset1, Asset asset2) {
+    public double getAskPrice(Asset asset1, Asset asset2) {
+        //greater price
         TradingPair pair = findTradingPairBetween(asset1, asset2);
-        double price1 = dataTable.get(pair).getAskPrice();
-        double price2 = dataTable.get(pair).getBidPrice();
-        return Math.max(price1, price2);
+        return dataTable.get(pair).getAskPrice();
     }
 
-    public double getLesserPrice(Asset asset1, Asset asset2) {
+    public double getBidPrice(Asset asset1, Asset asset2) {
+        //lesser price
         TradingPair pair = findTradingPairBetween(asset1, asset2);
-        double price1 = dataTable.get(pair).getAskPrice();
-        double price2 = dataTable.get(pair).getBidPrice();
-        return Math.min(price1, price2);
+        return dataTable.get(pair).getBidPrice();
     }
 
     public double getAmountFromPair(Asset source, Asset destination) {
