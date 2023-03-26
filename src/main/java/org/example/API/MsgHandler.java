@@ -3,6 +3,8 @@ package org.example.API;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import io.protostuff.JsonIOUtil;
+import io.protostuff.ProtostuffIOUtil;
 import org.example.*;
 import org.example.models.book_request.BookData;
 import org.example.models.requests.MarketOrderRequest;
@@ -25,6 +27,12 @@ public class MsgHandler implements MessageHandler {
     public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
         MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);
         return gson.toJson(orderRequest);
+
+
+
+
+
+
     }
 
     public String prepareBuyMessageSignature(String body, long timestamp) {

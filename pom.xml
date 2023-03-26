@@ -56,6 +56,14 @@
             <artifactId>maven-assembly-plugin</artifactId>
             <version>3.5.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-core -->
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+
 
 
     </dependencies>
