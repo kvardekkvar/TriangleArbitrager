@@ -77,8 +77,6 @@ public class MsgHandler implements MessageHandler {
 
 
         JsonNode node = jsonHandler.readEntireJSON(message);
-        System.out.println(message);
-
 
         if (    node.has("channel") &&
                 node.get("channel").asText().equals("book") &&
