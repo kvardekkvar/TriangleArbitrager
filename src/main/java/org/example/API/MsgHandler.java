@@ -1,19 +1,14 @@
 package org.example.API;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import org.example.*;
 import org.example.models.book_request.BookData;
 import org.example.models.requests.MarketOrderRequest;
 import org.example.models.responses.BookResponse;
 import org.example.models.responses.SymbolsResponse;
 import org.example.models.symbols_request.Symbol;
+import org.example.util.JSONHandler;
+import org.example.util.JacksonHandler;
 import org.example.util.Util;
 
 import javax.websocket.MessageHandler;
@@ -22,21 +17,15 @@ import java.util.List;
 public class MsgHandler implements MessageHandler {
 
     private final MarketData marketData = MarketData.INSTANCE;
+    private final JSONHandler jsonHandler = new JacksonHandler();
 
     private PoloniexApi api;
 
-    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-    ObjectMapper mapper = new ObjectMapper();
 
 
     public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
         MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);
-        return gson.toJson(orderRequest);
-
-
-
-
+        return jsonHandler.toJSON(orderRequest);
 
 
     }
@@ -86,31 +75,15 @@ public class MsgHandler implements MessageHandler {
         SymbolsResponse symbolsResponse;
         BookResponse bookResponse;
 
-        //JsonElement jsonElement = gson.fromJson(message, JsonElement.class);
-        //JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-        JsonNode node = null;
-        try {
-            node = mapper.readTree(message);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-                /*
-        if (jsonObject.get("channel").getAsString().equals("book") &&
-                jsonObject.has("data") &&
-                !jsonObject.get("data").getAsJsonArray().isEmpty()) {
-            */
+        JsonNode node = jsonHandler.readEntireJSON(message);
 
-            if (node.get("channel").asText().equals("book") &&
-                    node.has("data") &&
-                    node.get("data").has(0)) {
-            try {
-                bookResponse = mapper.readValue(message, BookResponse.class);
-            } catch (JsonProcessingException e) {
-                System.out.println("Book block");
-                System.out.println(message);
-                throw new RuntimeException(e);
-            }
+        if (node.get("channel").asText().equals("book") &&
+                node.has("data") &&
+                node.get("data").has(0)) {
+
+            bookResponse = jsonHandler.fromJSON(message, BookResponse.class);
+
             if (bookResponse != null &&
                     bookResponse.getChannel().equals("book") &&
                     bookResponse.getData() != null &&
@@ -154,13 +127,8 @@ public class MsgHandler implements MessageHandler {
                 node.has("data") &&
                 node.get("data").has(0)) {
 
-            try {
-                symbolsResponse = mapper.readValue(message, SymbolsResponse.class);
-            } catch (JsonProcessingException e) {
-                System.out.println("Channel block");
-                System.out.println(message);
-                throw new RuntimeException(e);
-            }
+            symbolsResponse = jsonHandler.fromJSON(message, SymbolsResponse.class);
+
 
             if (symbolsResponse.getChannel().equals("symbols") && symbolsResponse.getData() != null) {
                 List<List<Symbol>> symbols2DArray = symbolsResponse.getData();

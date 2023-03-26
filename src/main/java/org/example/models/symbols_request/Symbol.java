@@ -1,32 +1,25 @@
 package org.example.models.symbols_request;
 
 import com.google.gson.annotations.Expose;
-import io.protostuff.Tag;
+
 
 public class Symbol {
 
     @Expose
-    @Tag(1)
+
     private String symbol;
     @Expose
-    @Tag(2)
+
     private String baseCurrencyName;
     @Expose
-    @Tag(3)
     private String quoteCurrencyName;
-    @Tag(value = "a", alias = "displayName")
     private String displayName;
     @Expose
-    @Tag(5)
     private String state;
-    @Tag(6)
     private Long visibleStartTime;
-    @Tag(7)
     private Long tradableStartTime;
-    @Tag(8)
     private CrossMargin crossMargin;
     @Expose
-    @Tag(9)
     private SymbolTradeLimit symbolTradeLimit;
 
     public String getSymbol() {
