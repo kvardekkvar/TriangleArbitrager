@@ -9,7 +9,7 @@ public class JSONHandler {
 
     public <T> String toJSON(T pojo, Class<T> classname){
 
-        jackson
+
     }
 
     public void fromJSON(){

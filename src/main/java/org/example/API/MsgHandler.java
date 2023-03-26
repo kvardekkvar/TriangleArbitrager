@@ -1,10 +1,13 @@
 package org.example.API;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import io.protostuff.JsonIOUtil;
-import io.protostuff.ProtostuffIOUtil;
 import org.example.*;
 import org.example.models.book_request.BookData;
 import org.example.models.requests.MarketOrderRequest;
@@ -23,6 +26,9 @@ public class MsgHandler implements MessageHandler {
     private PoloniexApi api;
 
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+
+    ObjectMapper mapper = new ObjectMapper();
+
 
     public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
         MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);
@@ -80,8 +86,31 @@ public class MsgHandler implements MessageHandler {
         SymbolsResponse symbolsResponse;
         BookResponse bookResponse;
 
+        //JsonElement jsonElement = gson.fromJson(message, JsonElement.class);
+        //JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+        JsonNode node = null;
         try {
-            bookResponse = gson.fromJson(message, BookResponse.class);
+            node = mapper.readTree(message);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+                /*
+        if (jsonObject.get("channel").getAsString().equals("book") &&
+                jsonObject.has("data") &&
+                !jsonObject.get("data").getAsJsonArray().isEmpty()) {
+            */
+
+            if (node.get("channel").asText().equals("book") &&
+                    node.has("data") &&
+                    node.get("data").has(0)) {
+            try {
+                bookResponse = mapper.readValue(message, BookResponse.class);
+            } catch (JsonProcessingException e) {
+                System.out.println("Book block");
+                System.out.println(message);
+                throw new RuntimeException(e);
+            }
             if (bookResponse != null &&
                     bookResponse.getChannel().equals("book") &&
                     bookResponse.getData() != null &&
@@ -118,13 +147,21 @@ public class MsgHandler implements MessageHandler {
                 }
                 return;
             }
-        } catch (JsonSyntaxException ignored) {
 
         }
 
+        if (node.get("channel").asText().equals("symbols") &&
+                node.has("data") &&
+                node.get("data").has(0)) {
 
-        try {
-            symbolsResponse = gson.fromJson(message, SymbolsResponse.class);
+            try {
+                symbolsResponse = mapper.readValue(message, SymbolsResponse.class);
+            } catch (JsonProcessingException e) {
+                System.out.println("Channel block");
+                System.out.println(message);
+                throw new RuntimeException(e);
+            }
+
             if (symbolsResponse.getChannel().equals("symbols") && symbolsResponse.getData() != null) {
                 List<List<Symbol>> symbols2DArray = symbolsResponse.getData();
                 for (List<Symbol> symbolRow : symbols2DArray) {
@@ -136,7 +173,6 @@ public class MsgHandler implements MessageHandler {
                 }
                 marketData.initialize();
             }
-        } catch (NullPointerException | JsonSyntaxException ignored) {
         }
 
     }
