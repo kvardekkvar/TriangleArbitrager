@@ -3,7 +3,7 @@ package org.example.util;
 import org.example.Asset;
 
 public class Constants {
-    public static final boolean MOCK = true;
+    public static final boolean MOCK = false;
 
     public static final String NORMAL_STATE = "NORMAL";
     public static final long ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS = 1000;
