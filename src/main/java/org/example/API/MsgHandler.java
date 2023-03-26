@@ -82,15 +82,15 @@ public class MsgHandler implements MessageHandler {
                 BookData data = bookResponse.getData().get(0);
                 TradingPair pair = marketData.findTradingPairBySymbol(data.getSymbol());
 
-                List<List<String>> asks = data.getAsks();
-                List<List<String>> bids = data.getBids();
+                List<String> asks = data.getAsks().get(0);
+                List<String> bids = data.getBids().get(0);
 
                 //4 lines below throw IndexOutOfBounds when trading is stopped by Poloniex and asks and bids lists come empty
-                double askPrice = Double.parseDouble(asks.get(0).get(0));
-                double askAmount = Double.parseDouble(asks.get(0).get(1));
+                double askPrice = Double.parseDouble(asks.get(0));
+                double askAmount = Double.parseDouble(asks.get(1));
 
-                double bidPrice = Double.parseDouble(bids.get(0).get(0));
-                double bidAmount = Double.parseDouble(bids.get(0).get(1));
+                double bidPrice = Double.parseDouble(bids.get(0));
+                double bidAmount = Double.parseDouble(bids.get(1));
 
                 marketData.setBookEntryAtTradingPair(pair, bidPrice, bidAmount, askPrice, askAmount);
 
