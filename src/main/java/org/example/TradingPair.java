@@ -28,7 +28,7 @@ public class TradingPair {
         this.quantityScale = quantityScale;
         this.amountScale = amountScale;
         this.state = state;
-        this.symbol=symbol;
+        this.symbol = symbol;
     }
 
     public static TradingPair fromSymbol(Symbol symbol) {
@@ -101,7 +101,7 @@ public class TradingPair {
         TradingPair pair = data.findTradingPairBetween(source, destination);
         BookEntry entry = data.getDataTable().get(pair);
         if (entry != null) {
-            result = String.format("pair %s, price1: %s, price2: %s", this, entry.getSourcePrice(), entry.getDestinationPrice());
+            result = String.format("pair %s, price1: %s, price2: %s", this, entry.getBidPrice(), entry.getAskPrice());
         } else {
             System.out.printf("ololo %s %s %s\n", source, destination, this);
         }

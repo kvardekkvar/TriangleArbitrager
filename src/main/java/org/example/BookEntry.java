@@ -6,23 +6,23 @@ public class BookEntry {
     private TradingPair tradingPair;
 
 
-    private double sourcePrice;
-    private double sourceAmount;
+    private double bidPrice;
+    private double bidAmount;
 
-    private double destinationPrice;
+    private double askPrice;
 
-    private double destinationAmount;
+    private double askAmount;
 
 
     private long timestampWhenUpdated;
 
 
-    public BookEntry(TradingPair tradingPair, double sourcePrice, double sourceAmount, double destinationPrice, double destinationAmount) {
+    public BookEntry(TradingPair tradingPair, double bidPrice, double bidAmount, double askPrice, double askAmount) {
         this.tradingPair = tradingPair;
-        this.sourcePrice = sourcePrice;
-        this.sourceAmount = sourceAmount;
-        this.destinationPrice = destinationPrice;
-        this.destinationAmount = destinationAmount;
+        this.bidPrice = bidPrice;
+        this.bidAmount = bidAmount;
+        this.askPrice = askPrice;
+        this.askAmount = askAmount;
     }
 
     public TradingPair getTradingPair() {
@@ -33,36 +33,36 @@ public class BookEntry {
         this.tradingPair = tradingPair;
     }
 
-    public double getSourcePrice() {
-        return sourcePrice;
+    public double getBidPrice() {
+        return bidPrice;
     }
 
-    public void setSourcePrice(double sourcePrice) {
-        this.sourcePrice = sourcePrice;
+    public void setBidPrice(double bidPrice) {
+        this.bidPrice = bidPrice;
     }
 
-    public double getSourceAmount() {
-        return sourceAmount;
+    public double getBidAmount() {
+        return bidAmount;
     }
 
-    public void setSourceAmount(double sourceAmount) {
-        this.sourceAmount = sourceAmount;
+    public void setBidAmount(double bidAmount) {
+        this.bidAmount = bidAmount;
     }
 
-    public double getDestinationPrice() {
-        return destinationPrice;
+    public double getAskPrice() {
+        return askPrice;
     }
 
-    public void setDestinationPrice(double destinationPrice) {
-        this.destinationPrice = destinationPrice;
+    public void setAskPrice(double askPrice) {
+        this.askPrice = askPrice;
     }
 
-    public double getDestinationAmount() {
-        return destinationAmount;
+    public double getAskAmount() {
+        return askAmount;
     }
 
-    public void setDestinationAmount(double destinationAmount) {
-        this.destinationAmount = destinationAmount;
+    public void setAskAmount(double askAmount) {
+        this.askAmount = askAmount;
     }
 
     public long getTimestampWhenUpdated() {

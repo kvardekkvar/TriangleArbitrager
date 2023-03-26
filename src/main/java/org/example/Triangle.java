@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.util.Constants;
+import org.example.util.Util;
 
 import java.util.Collections;
 import java.util.List;
@@ -104,21 +105,30 @@ public class Triangle {
 
 
     public boolean trianglePricesAreProfitable() {
-        price1 = first.isReversed ? 1 / marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
-        price2 = second.isReversed ? 1 / marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
-        price3 = third.isReversed ? 1 / marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
+        price1 = first.isReversed() ? 1 / marketData.getGreaterPrice(asset1, asset2) : marketData.getLesserPrice(asset1, asset2);
+        price2 = second.isReversed() ? 1 / marketData.getGreaterPrice(asset2, asset3) : marketData.getLesserPrice(asset2, asset3);
+        price3 = third.isReversed() ? 1 / marketData.getGreaterPrice(asset3, asset1) : marketData.getLesserPrice(asset3, asset1);
 
         //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
 
         return !(price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1);
     }
 
+    public double determineAmounts(OrientedPair pair, Asset firstAsset, Asset secondAsset){
+        boolean reversed = pair.isReversed();
+        double amount = reversed? marketData.getAskAmount(firstAsset, secondAsset) : marketData.getBidAmount(firstAsset, secondAsset);
+        int scale = reversed ? pair.getAmountScale() : pair.getQuantityScale();
+        amount = Util.roundedAmount(amount, scale);
+        return amount;
+    }
+
     public boolean triangleAmountsAreGreaterThanMinimum() {
-        double amount1 = first.isReversed() ? marketData.getAskAmount(asset1, asset2) : marketData.getBidAmount(asset1, asset2);
-        double amount2 = second.isReversed() ? marketData.getAskAmount(asset2, asset3) : marketData.getBidAmount(asset2, asset3);
-        double amount3 = third.isReversed() ? marketData.getAskAmount(asset3, asset1) : marketData.getBidAmount(asset3, asset1);
+        double amount1 = determineAmounts(first, asset1, asset2);
+        double amount2 = determineAmounts(second, asset2, asset3);
+        double amount3 = determineAmounts(third, asset3, asset1);
 
         List<Double> amounts = List.of(amount1, amount2 / price1, amount3 / (price1 * price2), AMOUNT_OF_BTC_TO_TRADE);
+
         amountOfBTCToUse = Collections.min(amounts);
 
         boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
@@ -142,10 +152,14 @@ public class Triangle {
             return false;
         }
 
+
         double fee = (1 - FeeSchedule.getMultiplicatorFee());
         amountToTrade1 = amountOfBTCToUse * fee;
         amountToTrade2 = amountToTrade1 * price1 * fee;
         amountToTrade3 = amountToTrade2 * price2 * fee;
+
+
+
 
         System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
                 first.logPrices(), second.logPrices(), third.logPrices(),

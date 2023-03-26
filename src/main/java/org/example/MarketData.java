@@ -123,20 +123,20 @@ public class MarketData {
         BookEntry oldEntry = dataTable.get(pair);
 
         oldEntry.setTimestampWhenUpdated(System.currentTimeMillis());
-        oldEntry.setDestinationAmount(entry.getDestinationAmount());
-        oldEntry.setDestinationPrice(entry.getDestinationPrice());
-        oldEntry.setSourceAmount(entry.getSourceAmount());
-        oldEntry.setSourcePrice(entry.getSourcePrice());
+        oldEntry.setAskAmount(entry.getAskAmount());
+        oldEntry.setAskPrice(entry.getAskPrice());
+        oldEntry.setBidAmount(entry.getBidAmount());
+        oldEntry.setBidPrice(entry.getBidPrice());
     }
 
     public void setBookEntryAtTradingPair(TradingPair pair, double bidPrice, double bidAmount, double askPrice, double askAmount) {
 
         BookEntry oldEntry = dataTable.get(pair);
         oldEntry.setTimestampWhenUpdated(System.currentTimeMillis());
-        oldEntry.setDestinationAmount(askAmount);
-        oldEntry.setDestinationPrice(askPrice);
-        oldEntry.setSourceAmount(bidAmount);
-        oldEntry.setSourcePrice(bidPrice);
+        oldEntry.setAskAmount(askAmount);
+        oldEntry.setAskPrice(askPrice);
+        oldEntry.setBidAmount(bidAmount);
+        oldEntry.setBidPrice(bidPrice);
     }
 
     public BookEntry getBookEntryByPair(Asset asset1, Asset asset2) {
@@ -167,33 +167,33 @@ public class MarketData {
 
     public double getGreaterPrice(Asset asset1, Asset asset2) {
         TradingPair pair = findTradingPairBetween(asset1, asset2);
-        double price1 = dataTable.get(pair).getDestinationPrice();
-        double price2 = dataTable.get(pair).getSourcePrice();
+        double price1 = dataTable.get(pair).getAskPrice();
+        double price2 = dataTable.get(pair).getBidPrice();
         return Math.max(price1, price2);
     }
 
     public double getLesserPrice(Asset asset1, Asset asset2) {
         TradingPair pair = findTradingPairBetween(asset1, asset2);
-        double price1 = dataTable.get(pair).getDestinationPrice();
-        double price2 = dataTable.get(pair).getSourcePrice();
+        double price1 = dataTable.get(pair).getAskPrice();
+        double price2 = dataTable.get(pair).getBidPrice();
         return Math.min(price1, price2);
     }
 
     public double getAmountFromPair(Asset source, Asset destination) {
         TradingPair pair = findTradingPairBetween(source, destination);
         if (pair.getSource().equals(source)) {
-            return dataTable.get(pair).getDestinationAmount();
+            return dataTable.get(pair).getAskAmount();
         } else {
-            return dataTable.get(pair).getSourceAmount();
+            return dataTable.get(pair).getBidAmount();
         }
     }
 
     public double getAskAmount(Asset base, Asset quote) {
         TradingPair pair = findTradingPairBetween(base, quote);
         if (pair.getSource().equals(base)) {
-            return dataTable.get(pair).getDestinationAmount();
+            return dataTable.get(pair).getAskAmount();
         } else {
-            return dataTable.get(pair).getSourceAmount();
+            return dataTable.get(pair).getAskAmount();
         }
 
     }
@@ -201,9 +201,9 @@ public class MarketData {
     public double getBidAmount(Asset base, Asset quote) {
         TradingPair pair = findTradingPairBetween(base, quote);
         if (pair.getSource().equals(base)) {
-            return dataTable.get(pair).getSourceAmount();
+            return dataTable.get(pair).getBidAmount();
         } else {
-            return dataTable.get(pair).getDestinationAmount();
+            return dataTable.get(pair).getBidAmount();
         }
 
     }
