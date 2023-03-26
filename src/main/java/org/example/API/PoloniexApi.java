@@ -4,12 +4,13 @@ import java.net.URI;
 
 public class PoloniexApi {
 
+    public static PoloniexApi INSTANCE = new PoloniexApi();
     private final WebsocketClientEndpoint publicWebsocket;
 
     //private final WebsocketClientEndpoint privateWebsocket;
 
     private final RestApiClient privateRest;
-    public PoloniexApi() {
+    private PoloniexApi() {
         URI publicEndpoint = URI.create("wss://ws.poloniex.com/ws/public");
         URI privateEndpoint = URI.create("wss://ws.poloniex.com/ws/private");
 

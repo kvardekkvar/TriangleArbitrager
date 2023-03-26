@@ -77,8 +77,11 @@ public class MsgHandler implements MessageHandler {
 
 
         JsonNode node = jsonHandler.readEntireJSON(message);
+        System.out.println(message);
 
-        if (node.get("channel").asText().equals("book") &&
+
+        if (    node.has("channel") &&
+                node.get("channel").asText().equals("book") &&
                 node.has("data") &&
                 node.get("data").has(0)) {
 
@@ -123,7 +126,8 @@ public class MsgHandler implements MessageHandler {
 
         }
 
-        if (node.get("channel").asText().equals("symbols") &&
+        if (    node.has("channel") &&
+                node.get("channel").asText().equals("symbols") &&
                 node.has("data") &&
                 node.get("data").has(0)) {
 

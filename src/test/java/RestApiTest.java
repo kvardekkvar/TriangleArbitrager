@@ -9,7 +9,7 @@ public class RestApiTest {
     @Test
     public void testPostRequestOrders() {
 
-        PoloniexApi api = new PoloniexApi();
+        PoloniexApi api = PoloniexApi.INSTANCE;
         Asset asset1 = new Asset("BTC", 0.0001);
         Asset asset2 = new Asset("USDT", 1);
         MsgHandler handler = new MsgHandler();

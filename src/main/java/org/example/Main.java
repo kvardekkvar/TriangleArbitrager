@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.API.Crypto;
+import org.example.API.Pinger;
 import org.example.API.PoloniexApi;
 import org.example.util.Constants;
 
@@ -19,8 +20,9 @@ public class Main {
 
         while (true) {
             RESTART_NEEDED = false;
-            PoloniexApi poloniexApi = new PoloniexApi();
+            PoloniexApi poloniexApi = PoloniexApi.INSTANCE;
             Crypto crypto = Crypto.INSTANCE;
+            Pinger pinger = new Pinger();
 
             String symbolsRequest = "{\n" +
                     "  \"event\": \"subscribe\",\n" +
@@ -28,7 +30,7 @@ public class Main {
                     "  \"symbols\": [\"all\"]\n" +
                     "}\n";
             poloniexApi.sendPublic(symbolsRequest);
-            //Thread.sleep(5000);
+            Thread.sleep(5000);
 
             List<String> subscriptions = new LinkedList<>();
             for (Triangle triangle : MarketData.INSTANCE.getTriangles()) {
@@ -56,8 +58,8 @@ public class Main {
 
             }
 
-
             for (String symbol : subscriptions) {
+                LockSupport.parkNanos(1_000_000L);
                 String bookRequest = String.format(
                         "{\n\"event\": \"subscribe\",\n \"channel\": [\"book\"],\n \"symbols\": [\"%s\"]\n}\n", symbol
                 );
@@ -65,6 +67,10 @@ public class Main {
             }
 
             while (!RESTART_NEEDED) {
+                if (System.currentTimeMillis()%1000 < 5){
+                    pinger.sendPing();
+                }
+
                 try {
                     LockSupport.parkNanos(16384) ;
                 } catch (Exception e) {
