@@ -114,18 +114,22 @@ public class Triangle {
         return !(price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1);
     }
 
-    public double determineAmounts(OrientedPair pair, Asset firstAsset, Asset secondAsset){
+    public double setAmount(OrientedPair pair, Asset firstAsset, Asset secondAsset){
         boolean reversed = pair.isReversed();
-        double amount = reversed? marketData.getAskAmount(firstAsset, secondAsset) : marketData.getBidAmount(firstAsset, secondAsset);
-        int scale = reversed ? pair.getAmountScale() : pair.getQuantityScale();
-        amount = Util.roundedAmount(amount, scale);
+        double amount = reversed ? marketData.getAskAmount(firstAsset, secondAsset) : marketData.getBidAmount(firstAsset, secondAsset);
+        amount = roundAmount(pair, amount);
         return amount;
     }
-
+    public double roundAmount(OrientedPair pair, double amount){
+        boolean reversed = pair.isReversed();
+        int scale = reversed ? pair.getAmountScale() : pair.getQuantityScale();
+        amount = Util.amountRoundedDown(amount, scale);
+        return amount;
+    }
     public boolean triangleAmountsAreGreaterThanMinimum() {
-        double amount1 = determineAmounts(first, asset1, asset2);
-        double amount2 = determineAmounts(second, asset2, asset3);
-        double amount3 = determineAmounts(third, asset3, asset1);
+        double amount1 = setAmount(first, asset1, asset2);
+        double amount2 = setAmount(second, asset2, asset3);
+        double amount3 = setAmount(third, asset3, asset1);
 
         List<Double> amounts = List.of(amount1, amount2 / price1, amount3 / (price1 * price2), AMOUNT_OF_BTC_TO_TRADE);
 
@@ -137,6 +141,8 @@ public class Triangle {
 
         return !amountLimitation;
     }
+
+
 
     public boolean isProfitable() {
 
@@ -154,9 +160,9 @@ public class Triangle {
 
 
         double fee = (1 - FeeSchedule.getMultiplicatorFee());
-        amountToTrade1 = amountOfBTCToUse * fee;
-        amountToTrade2 = amountToTrade1 * price1 * fee;
-        amountToTrade3 = amountToTrade2 * price2 * fee;
+        amountToTrade1 = roundAmount(first, amountOfBTCToUse * fee);
+        amountToTrade2 = roundAmount(second, amountToTrade1 * price1 * fee);
+        amountToTrade3 = roundAmount(third, amountToTrade2 * price2 * fee);
 
 
 

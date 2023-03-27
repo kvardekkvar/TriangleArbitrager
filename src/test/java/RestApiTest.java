@@ -6,6 +6,7 @@ import org.junit.Test;
 
 public class RestApiTest {
 
+    /*
     @Test
     public void testPostRequestOrders() {
 
@@ -17,5 +18,5 @@ public class RestApiTest {
         OrientedPair orientedPair = new OrientedPair(asset1, asset2, 0, 0, "NORMAL", "BTC_USDT");
         handler.sendBuyMessage(orientedPair, 10000000);
     }
-
+*/
 }

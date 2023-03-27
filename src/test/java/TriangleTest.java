@@ -36,7 +36,7 @@ public class TriangleTest {
         // Продаем ETH (bid)  -- scale 1
 
         double expected1 = 864.294;
-        double expected2 = 24;
+        double expected2 = 23;
         double expected3 = 35.4;
 
 
@@ -48,9 +48,9 @@ public class TriangleTest {
         OrientedPair oriented2 = triangle.getSecond();
         OrientedPair oriented3 = triangle.getThird();
         //Act
-        double amount1 = triangle.determineAmounts(oriented1, oriented1.getSource(), oriented1.getDestination());
-        double amount2 = triangle.determineAmounts(oriented2, oriented2.getSource(), oriented2.getDestination());
-        double amount3 = triangle.determineAmounts(oriented3, oriented3.getSource(), oriented3.getDestination());
+        double amount1 = triangle.setAmount(oriented1, oriented1.getSource(), oriented1.getDestination());
+        double amount2 = triangle.setAmount(oriented2, oriented2.getSource(), oriented2.getDestination());
+        double amount3 = triangle.setAmount(oriented3, oriented3.getSource(), oriented3.getDestination());
 
 
         //Assert

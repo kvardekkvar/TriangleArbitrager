@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonHandler implements JSONHandler {
 
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
-    public JsonNode readEntireJSON(String message){
+    public JsonNode readEntireJSON(String message) {
         try {
             return mapper.readTree(message);
         } catch (JsonProcessingException e) {
@@ -18,7 +18,7 @@ public class JacksonHandler implements JSONHandler {
         return null;
     }
 
-    public <T> String toJSON(T pojo){
+    public <T> String toJSON(T pojo) {
         try {
             return mapper.writeValueAsString(pojo);
         } catch (JsonProcessingException e) {
@@ -27,7 +27,7 @@ public class JacksonHandler implements JSONHandler {
         return null;
     }
 
-    public <T> T fromJSON(String message, Class<T> classname){
+    public <T> T fromJSON(String message, Class<T> classname) {
         try {
             return mapper.readValue(message, classname);
         } catch (JsonProcessingException e) {

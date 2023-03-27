@@ -1,7 +1,11 @@
+import org.example.API.MsgHandler;
 import org.example.util.JacksonHandler;
 import org.example.models.symbols_request.Symbol;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class JSONTest {
 
@@ -25,5 +29,15 @@ public class JSONTest {
         Symbol actual = jsoner.fromJSON(message, Symbol.class);
 
         Assert.assertEquals("ololo", actual.getBaseCurrencyName());
+    }
+
+    @Test
+    public void marketOrderRequest(){
+        MsgHandler handler = new MsgHandler();
+
+        String actual = handler.prepareBuyMessageBody("Base_Quote", "1", true, "SELL");
+
+        MatcherAssert.assertThat(actual, containsString("Base_Quote"));
+
     }
 }
