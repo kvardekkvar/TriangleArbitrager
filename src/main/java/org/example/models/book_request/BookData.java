@@ -1,5 +1,6 @@
 package org.example.models.book_request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 
 import java.util.List;
@@ -7,12 +8,15 @@ import java.util.List;
 public class BookData {
     @Expose
     private String symbol;
+    @JsonIgnore
     private long createTime;
     @Expose
     private List<List<String>> asks;
     @Expose
     private List<List<String>> bids;
+    @JsonIgnore
     private long id;
+    @JsonIgnore
     private long ts;
 
     public String getSymbol() { return symbol; }

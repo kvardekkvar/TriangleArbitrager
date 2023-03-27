@@ -1,5 +1,6 @@
 package org.example.models.symbols_request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.Expose;
 
@@ -15,11 +16,15 @@ public class Symbol {
     private String baseCurrencyName;
     @Expose
     private String quoteCurrencyName;
+    @JsonIgnore
     private String displayName;
     @Expose
     private String state;
+    @JsonIgnore
     private Long visibleStartTime;
+    @JsonIgnore
     private Long tradableStartTime;
+    @JsonIgnore
     private CrossMargin crossMargin;
     @Expose
     private SymbolTradeLimit symbolTradeLimit;

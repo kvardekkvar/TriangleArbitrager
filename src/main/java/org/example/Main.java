@@ -66,6 +66,8 @@ public class Main {
                 poloniexApi.sendPublic(bookRequest);
             }
 
+            System.out.println("Subscribed to all channels");
+
             while (!RESTART_NEEDED) {
                 if (System.currentTimeMillis()%1000 < 5){
                     pinger.sendPing();

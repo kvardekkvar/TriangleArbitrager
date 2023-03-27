@@ -1,6 +1,14 @@
 package org.example.models.symbols_request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class CrossMargin {
+
+
+    @JsonIgnore
+    private boolean supportCrossMargin;
+    @JsonIgnore
+    private int maxLeverage;
     public boolean isSupportCrossMargin() {
         return supportCrossMargin;
     }
@@ -16,7 +24,4 @@ public class CrossMargin {
     public void setMaxLeverage(int maxLeverage) {
         this.maxLeverage = maxLeverage;
     }
-
-    boolean supportCrossMargin;
-    int maxLeverage;
 }

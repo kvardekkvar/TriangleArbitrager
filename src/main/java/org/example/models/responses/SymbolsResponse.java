@@ -1,5 +1,6 @@
 package org.example.models.responses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.example.models.symbols_request.Symbol;
@@ -14,7 +15,7 @@ public class SymbolsResponse {
     @Expose
     @SerializedName("data")
     List<List<Symbol>> data;
-
+    @JsonIgnore
     @SerializedName("action")
     String action;
 

@@ -1,10 +1,13 @@
 package org.example.models.symbols_request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 
 public class SymbolTradeLimit {
     @Expose
     public String symbol;
+    @JsonIgnore
+
     public int priceScale;
 
     @Expose
@@ -15,7 +18,9 @@ public class SymbolTradeLimit {
     public String minQuantity;
     @Expose
     public String minAmount;
+    @JsonIgnore
     public String highestBid;
+    @JsonIgnore
     public String lowestAsk;
 
     public String getSymbol() {
