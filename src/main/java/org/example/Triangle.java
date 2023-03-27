@@ -37,9 +37,11 @@ public class Triangle {
     private double amountOfBTCToUse;
 
     public Triangle(TradingPair first, TradingPair second, TradingPair third) {
-        OrientedPair oriented1 = new OrientedPair(first.getSource(), first.getDestination(), first.quantityScale, first.amountScale, first.getState(), first.getSymbol());
-        OrientedPair oriented2 = new OrientedPair(second.getSource(), second.getDestination(), second.quantityScale, second.amountScale, second.getState(), second.getSymbol());
-        OrientedPair oriented3 = new OrientedPair(third.getSource(), third.getDestination(), third.quantityScale, third.amountScale, third.getState(), third.getSymbol());
+
+        OrientedPair oriented1 = new OrientedPair(first);
+        OrientedPair oriented2 = new OrientedPair(second);
+        OrientedPair oriented3 = new OrientedPair(third);
+
 
         boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
         if (isReverseNeeded) {
@@ -54,7 +56,7 @@ public class Triangle {
             }
         }
 
-        if (!oriented1.source.equals(Constants.BTC)) {
+        if (!oriented1.getSource().equals(Constants.BTC)) {
             oriented1.reverse();
             oriented2.reverse();
             oriented3.reverse();
@@ -67,9 +69,9 @@ public class Triangle {
         asset2 = this.second.getSource();
         asset3 = this.third.getSource();
 
-        entry1 = marketData.getBookEntryByPair(asset1, asset2);
-        entry2 = marketData.getBookEntryByPair(asset2, asset3);
-        entry3 = marketData.getBookEntryByPair(asset1, asset3);
+        entry1 = marketData.getBookEntryByPair(first);
+        entry2 = marketData.getBookEntryByPair(second);
+        entry3 = marketData.getBookEntryByPair(third);
     }
 
     public boolean isReverseOfPairNotNeeded(TradingPair one, TradingPair other) {
@@ -105,24 +107,23 @@ public class Triangle {
 
 
     public boolean trianglePricesAreProfitable() {
-        price1 = first.isReversed() ? 1 / marketData.getAskPrice(asset1, asset2) : marketData.getBidPrice(asset1, asset2);
-        price2 = second.isReversed() ? 1 / marketData.getAskPrice(asset2, asset3) : marketData.getBidPrice(asset2, asset3);
-        price3 = third.isReversed() ? 1 / marketData.getAskPrice(asset3, asset1) : marketData.getBidPrice(asset3, asset1);
+        price1 = first.isReversed() ? 1 / marketData.getAskPrice(first.getPair()) : marketData.getBidPrice(first.getPair());
+        price2 = second.isReversed() ? 1 / marketData.getAskPrice(second.getPair()) : marketData.getBidPrice(second.getPair());
+        price3 = third.isReversed() ? 1 / marketData.getAskPrice(third.getPair()) : marketData.getBidPrice(third.getPair());
 
         //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
 
         return !(price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1);
     }
 
-    public double setAmount(OrientedPair pair, Asset firstAsset, Asset secondAsset){
-        boolean reversed = pair.isReversed();
-        double amount = reversed ? marketData.getAskAmount(firstAsset, secondAsset) : marketData.getBidAmount(firstAsset, secondAsset);
-        amount = roundAmount(pair, amount);
+    public double setAmount(OrientedPair orientedPair, Asset firstAsset, Asset secondAsset){
+        boolean reversed = orientedPair.isReversed();
+        double amount = reversed ? marketData.getAskAmount(orientedPair.getPair()) : marketData.getBidAmount(orientedPair.getPair());
+        amount = roundAmount(orientedPair, amount);
         return amount;
     }
-    public double roundAmount(OrientedPair pair, double amount){
-        boolean reversed = pair.isReversed();
-        int scale = reversed ? pair.getAmountScale() : pair.getQuantityScale();
+    public double roundAmount(OrientedPair orientedPair, double amount){
+        int scale = orientedPair.getScale();
         amount = Util.amountRoundedDown(amount, scale);
         return amount;
     }
@@ -168,7 +169,7 @@ public class Triangle {
 
 
         System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
-                first.logPrices(), second.logPrices(), third.logPrices(),
+                first.getPair().logPrices(), second.getPair().logPrices(), third.getPair().logPrices(),
                 amountToTrade1, amountToTrade2, amountToTrade3);
         return true;
 

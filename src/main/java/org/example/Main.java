@@ -34,9 +34,9 @@ public class Main {
 
             List<String> subscriptions = new LinkedList<>();
             for (Triangle triangle : MarketData.INSTANCE.getTriangles()) {
-                OrientedPair pair1 = triangle.getFirst();
-                OrientedPair pair2 = triangle.getSecond();
-                OrientedPair pair3 = triangle.getThird();
+                TradingPair pair1 = triangle.getFirst().getPair();
+                TradingPair pair2 = triangle.getSecond().getPair();
+                TradingPair pair3 = triangle.getThird().getPair();
                 if (!pair1.getState().equals(NORMAL_STATE) || !pair2.getState().equals(NORMAL_STATE) || !pair3.getState().equals(NORMAL_STATE)){
                     continue;
                 }

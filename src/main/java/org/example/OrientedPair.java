@@ -1,24 +1,21 @@
 package org.example;
 
-public class OrientedPair extends TradingPair {
+public class OrientedPair  {
 
 
-    private Asset baseCurrency;
+    private TradingPair pair;
     private boolean isReversed;
 
-    public OrientedPair(Asset source, Asset destination, int quantityScale, int amountScale, String state, String symbol) {
-        super(source, destination, quantityScale, amountScale, state, symbol);
-        baseCurrency = destination;
+    public OrientedPair(TradingPair pair) {
+        this.pair = pair;
         isReversed = false;
     }
-
-
     public void reverse() {
-        Asset temp = destination;
-        destination = source;
-        source = temp;
-
         isReversed = !isReversed;
+    }
+
+    public TradingPair getPair() {
+        return pair;
     }
 
     public boolean isReversed() {
@@ -26,12 +23,22 @@ public class OrientedPair extends TradingPair {
     }
 
     public String getSymbol() {
-            return isReversed? String.format("%s_%s", destination, source):String.format("%s_%s", source, destination);
+            return pair.getSymbol();
     }
 
-    @Override
+    public Asset getSource(){
+        return isReversed ? pair.getDestination() : pair.getSource();
+    }
+    public Asset getDestination(){
+        return isReversed ? pair.getSource() : pair.getDestination();
+    }
+
+    public int getScale(){
+        return isReversed ? pair.getAmountScale() : pair.getQuantityScale();
+    }
+
     public String toString() {
 
-        return String.format("%s_%s%s", source, destination, isReversed ? "r" : "");
+        return String.format("%s_%s%s", pair.getSource(), pair.getDestination(), isReversed ? "r" : "");
     }
 }

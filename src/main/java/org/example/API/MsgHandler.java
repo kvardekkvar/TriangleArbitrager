@@ -42,11 +42,12 @@ public class MsgHandler implements MessageHandler {
         return crypto.getSignature(request);
     }
 
-    public void sendBuyMessage(OrientedPair pair, double amount) {
+    public void sendBuyMessage(OrientedPair orientedPair, double amount) {
         long timestamp = System.currentTimeMillis();
-        String symbol = pair.getSymbol();
+        String symbol = orientedPair.getSymbol();
 
-        boolean isAmount = pair.isReversed();
+        boolean isAmount = orientedPair.isReversed();
+        TradingPair pair = orientedPair.getPair();
         String side = isAmount ? "BUY" : "SELL";
         String amountOrQuantity = isAmount ? "amount" : "quantity";
         int scale = isAmount ? pair.getAmountScale() : pair.getQuantityScale();
@@ -60,7 +61,7 @@ public class MsgHandler implements MessageHandler {
                 String body = prepareBuyMessageBody(symbol, amountString, isAmount, side);
                 String signature = prepareBuyMessageSignature(body, timestamp);
 
-                System.out.printf("Order message sent: %s\n%n", pair.logPrices());
+                System.out.printf("Order message sending: %s\n%n", pair.logPrices());
                 api.makeOrder(body, signature, timestamp);
                 isSuccess = true;
             } catch (LowBalanceException e) {

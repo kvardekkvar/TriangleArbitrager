@@ -16,10 +16,10 @@ public class TriangleTest {
         Asset USDT = new Asset("USDT", 10);
         Asset ETH = new Asset("ETH", 10);
 
-        TradingPair pair1 = new OrientedPair(BTC, USDT, 3, 0, NORMAL_STATE, "BTC_USDT");
-        TradingPair pair2 = new OrientedPair(ETH, USDT, 1, 0, NORMAL_STATE, "ETH_USDT" );
-        TradingPair pair3 = new OrientedPair(ETH, BTC, 1, 3, NORMAL_STATE, "ETH_BTC");
-
+        TradingPair pair1 = new TradingPair(BTC, USDT, 3, 0, NORMAL_STATE, "BTC_USDT");
+        TradingPair pair2 = new TradingPair(ETH, USDT, 1, 0, NORMAL_STATE, "ETH_USDT" );
+        TradingPair pair3 = new TradingPair(ETH, BTC, 1, 3, NORMAL_STATE, "ETH_BTC");
+        
         Triangle triangle  = new Triangle(pair1, pair2, pair3);
         MarketData data = MarketData.INSTANCE;
 

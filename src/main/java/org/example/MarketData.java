@@ -46,6 +46,7 @@ public class MarketData {
         return tradingPairsMap.getOrDefault(symbol, null);
     }
 
+
     public void addTriangleToHashMap(String key, Triangle triangle) {
         if (trianglesByPair.containsKey(key)) {
             List<Triangle> list = trianglesByPair.get(key);
@@ -139,8 +140,7 @@ public class MarketData {
         oldEntry.setBidPrice(bidPrice);
     }
 
-    public BookEntry getBookEntryByPair(Asset asset1, Asset asset2) {
-        TradingPair pair = findTradingPairBetween(asset1, asset2);
+    public BookEntry getBookEntryByPair(TradingPair pair) {
         return dataTable.get(pair);
     }
 
@@ -165,27 +165,23 @@ public class MarketData {
         return List.of(profitableTriangles, profitableReversedTriangles);
     }
 
-    public double getAskPrice(Asset asset1, Asset asset2) {
+    public double getAskPrice(TradingPair pair) {
         //greater price
-        TradingPair pair = findTradingPairBetween(asset1, asset2);
         return dataTable.get(pair).getAskPrice();
     }
 
-    public double getBidPrice(Asset asset1, Asset asset2) {
+    public double getBidPrice(TradingPair pair) {
         //lesser price
-        TradingPair pair = findTradingPairBetween(asset1, asset2);
         return dataTable.get(pair).getBidPrice();
     }
 
-    public double getAskAmount(Asset base, Asset quote) {
-        TradingPair pair = findTradingPairBetween(base, quote);
+    public double getAskAmount(TradingPair pair) {
         return dataTable.get(pair).getAskAmount();
 
 
     }
 
-    public double getBidAmount(Asset base, Asset quote) {
-        TradingPair pair = findTradingPairBetween(base, quote);
+    public double getBidAmount(TradingPair pair) {
         return dataTable.get(pair).getBidAmount();
 
     }
