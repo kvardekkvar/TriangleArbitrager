@@ -21,6 +21,7 @@ public class Main {
         while (true) {
             RESTART_NEEDED = false;
             PoloniexApi poloniexApi = PoloniexApi.INSTANCE;
+            poloniexApi.reconnect();
             Crypto crypto = Crypto.INSTANCE;
             Pinger pinger = new Pinger();
 

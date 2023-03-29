@@ -5,41 +5,34 @@ import java.net.URI;
 public class PoloniexApi {
 
     public static PoloniexApi INSTANCE = new PoloniexApi();
-    private final WebsocketClientEndpoint publicWebsocket;
+    private WebsocketClientEndpoint publicWebsocket;
 
-    //private final WebsocketClientEndpoint privateWebsocket;
-
-    private final RestApiClient privateRest;
+    private RestApiClient privateRest;
     private PoloniexApi() {
+        connect();
+    }
+
+    private void connect(){
         URI publicEndpoint = URI.create("wss://ws.poloniex.com/ws/public");
         URI privateEndpoint = URI.create("wss://ws.poloniex.com/ws/private");
 
         this.publicWebsocket = new WebsocketClientEndpoint(publicEndpoint);
-        //this.privateWebsocket = new WebsocketClientEndpoint(privateEndpoint);
 
         MsgHandler messageHandler = new MsgHandler();
         messageHandler.setApi(this);
         publicWebsocket.addMessageHandler(messageHandler);
-        /*
-        MsgHandler messageHandler2 = new MsgHandler();
-        messageHandler2.setApi(this);
-        privateWebsocket.addMessageHandler(messageHandler2);
-        */
+
         this.privateRest = new RestApiClient();
+
+    }
+    public void reconnect(){
+        connect();
     }
 
     public void send(String data, boolean isPublic) {
         if (isPublic) {
             publicWebsocket.sendMessage(data);
         }
-        /*else {
-            privateWebsocket.sendMessage(data);
-        }
-         */
-    }
-
-    public void sendPrivate(String data) {
-        send(data, false);
     }
 
     public void sendPublic(String data) {
