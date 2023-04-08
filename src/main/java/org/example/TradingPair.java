@@ -103,7 +103,7 @@ public class TradingPair {
         if (entry != null) {
             result = String.format("pair %s, price1: %s, price2: %s", this, entry.getBidPrice(), entry.getAskPrice());
         } else {
-            System.out.printf("ololo %s %s %s\n", source, destination, this);
+            System.out.printf("MarketData has no pair  %s %s %s\n", source, destination, this);
         }
         return result;
     }

@@ -50,12 +50,12 @@ public class MsgHandler implements MessageHandler {
         TradingPair pair = orientedPair.getPair();
         String side = isAmount ? "BUY" : "SELL";
         String amountOrQuantity = isAmount ? "amount" : "quantity";
-        int scale = isAmount ? pair.getAmountScale() : pair.getQuantityScale();
+        int scale = orientedPair.getScale();
         String amountString = Util.formattedAmount(amount, scale);
 
         boolean isSuccess = false;
         int cnt = 0;
-        while (!isSuccess && cnt < 10)
+        while (!isSuccess && cnt < 3)
             try {
                 cnt++;
                 String body = prepareBuyMessageBody(symbol, amountString, isAmount, side);
