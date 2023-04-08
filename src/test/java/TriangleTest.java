@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.sql.SQLOutput;
 
 import static org.example.util.Constants.NORMAL_STATE;
+
 @RunWith(MockitoJUnitRunner.class)
 
 public class TriangleTest {
@@ -37,7 +38,7 @@ public class TriangleTest {
         data.addPair(pair3);
         data.initialize();
         BookEntry entry1 = new BookEntry(pair1, 20000, 864.29448, 20010, 1);
-        BookEntry entry2 = new BookEntry(pair2, 10000, 2, 10010, 23.57293);
+        BookEntry entry2 = new BookEntry(pair2, 10000, 2, 100, 0.2357);
         BookEntry entry3 = new BookEntry(pair3, 0.5, 35.425882, 0.52, 1);
 
         // Продаем BTC (bid)  -- scale 3
@@ -45,7 +46,7 @@ public class TriangleTest {
         // Продаем ETH (bid)  -- scale 1
 
         double expected1 = 864.294;
-        double expected2 = 23;
+        double expected2 = 24;
         double expected3 = 35.4;
 
 
@@ -80,15 +81,15 @@ public class TriangleTest {
         // ETH_BTC: SELL 100 ETH, bid
         // USDT_BTC_r: BUY 10.5 BTC, ask
 
-        double modifier = 0.01;
+        double modifier = 10e-5;
 
         double BTC_USDT_price = 20000f;
         double BTC_ETH_price = 0.1f;
         double ETH_USDT_price = 2100f;
 
-        Asset BTC = new Asset("BTC", 0.0001*modifier);
-        Asset USDT = new Asset("USDT", 0.0001*modifier);
-        Asset ETH = new Asset("ETH", 0.0001*modifier);
+        Asset BTC = new Asset("BTC", 0);
+        Asset USDT = new Asset("USDT", 0);
+        Asset ETH = new Asset("ETH", 0);
 
         TradingPair ETH_BTC = new TradingPair(ETH, BTC, 8, 8, NORMAL_STATE, "ETH_BTC");
         TradingPair ETH_USDT = new TradingPair(ETH, USDT, 8, 8, NORMAL_STATE, "ETH_USDT");
@@ -99,13 +100,13 @@ public class TriangleTest {
         Mockito.when(marketData.getBidPrice(ETH_USDT)).thenReturn(ETH_USDT_price);
         Mockito.when(marketData.getAskPrice(BTC_USDT)).thenReturn(BTC_USDT_price);
 
-        Mockito.when(marketData.getAskAmount(ETH_BTC)).thenReturn(100.0*modifier);
-        Mockito.when(marketData.getBidAmount(ETH_USDT)).thenReturn(100.0*modifier);
-        Mockito.when(marketData.getAskAmount(BTC_USDT)).thenReturn(10.5*modifier);
-        
-        BookEntry entry1 = new BookEntry(ETH_BTC, 2, 2, BTC_ETH_price, 100d*modifier);
-        BookEntry entry2 = new BookEntry(ETH_USDT, BTC_ETH_price, 100*modifier, 2, 2);
-        BookEntry entry3 = new BookEntry(BTC_USDT, 2, 2, BTC_ETH_price, 10.5*modifier);
+        Mockito.when(marketData.getAskAmount(ETH_BTC)).thenReturn(2 * modifier);
+        Mockito.when(marketData.getBidAmount(ETH_USDT)).thenReturn(2 * modifier);
+        Mockito.when(marketData.getAskAmount(BTC_USDT)).thenReturn(0.21 * modifier);
+
+        BookEntry entry1 = new BookEntry(ETH_BTC, 2, 2, BTC_ETH_price, 2 * modifier);
+        BookEntry entry2 = new BookEntry(ETH_USDT, BTC_ETH_price, 2 * modifier, 2, 2);
+        BookEntry entry3 = new BookEntry(BTC_USDT, 2, 2, BTC_ETH_price, 0.21 * modifier);
         long timestamp = System.currentTimeMillis();
         entry1.setTimestampWhenUpdated(timestamp);
         entry2.setTimestampWhenUpdated(timestamp);
@@ -116,13 +117,19 @@ public class TriangleTest {
         Mockito.when(marketData.getBookEntryByPair(BTC_USDT)).thenReturn(entry3);
 
         Triangle triangle = new Triangle(marketData, ETH_BTC, ETH_USDT, BTC_USDT);
+
+        Assert.assertTrue(triangle.triangleIsNew());
+        Assert.assertTrue(triangle.trianglePricesAreProfitable());
+        Assert.assertTrue(triangle.triangleAmountsAreGreaterThanMinimum());
         Assert.assertTrue(triangle.isProfitable());
 
         System.out.printf("%s, %s, %s\n", triangle.getAmountToTrade1(), triangle.getAmountToTrade2(), triangle.getAmountToTrade3());
-        double acceptable_error = 0.000000001*modifier;
-        Assert.assertEquals(100.0*modifier, triangle.getAmountToTrade1(), acceptable_error);
-        Assert.assertEquals(100.0*modifier, triangle.getAmountToTrade2(), acceptable_error);
-        Assert.assertEquals(10.5*modifier, triangle.getAmountToTrade3(), acceptable_error);
+
+        double acceptable_error = 0.0001 * modifier;
+        double fee = 1 - FeeSchedule.getMultiplicatorFee();
+        Assert.assertEquals(2 * modifier * fee, triangle.getAmountToTrade1(), acceptable_error);
+        Assert.assertEquals(2 * modifier * fee * fee, triangle.getAmountToTrade2(), acceptable_error);
+        Assert.assertEquals(0.21 * modifier * fee * fee * fee, triangle.getAmountToTrade3(), acceptable_error);
 
     }
 }

@@ -14,13 +14,13 @@ public class Util {
             i++;
         }
         DecimalFormat df = new DecimalFormat(new String(pattern));
-        df.setRoundingMode(RoundingMode.DOWN);
+        df.setRoundingMode(RoundingMode.HALF_UP);
         return df.format(amount).replace(',', '.');
     }
 
     public static double amountRoundedDown(double amount, int precision){
         BigDecimal bd = new BigDecimal(Double.toString(amount));
-        bd = bd.setScale(precision, RoundingMode.DOWN);
+        bd = bd.setScale(precision, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
 }
