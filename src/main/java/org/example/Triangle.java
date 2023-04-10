@@ -54,13 +54,13 @@ public class Triangle {
 
         boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
         if (isReverseNeeded) {
-            if (isReverseOfPairNotNeeded(second, third)) {
+            if (isReverseNeeded(first, second, third) || isReverseNeeded(first, third, second)) {
                 oriented1.reverse();
             }
-            if (isReverseOfPairNotNeeded(first, third)) {
+            else if (isReverseNeeded(second, first, third) || isReverseNeeded(second, third, first)) {
                 oriented2.reverse();
             }
-            if (isReverseOfPairNotNeeded(first, second)) {
+            else if (isReverseNeeded(third, second, first) || isReverseNeeded(third, first, second)) {
                 oriented3.reverse();
             }
         }
@@ -85,6 +85,10 @@ public class Triangle {
 
     public boolean isReverseOfPairNotNeeded(TradingPair one, TradingPair other) {
         return one.getSource().equals(other.getDestination()) || one.getDestination().equals(other.getSource());
+    }
+
+    public boolean isReverseNeeded(TradingPair checkedPair, TradingPair decomposeA, TradingPair decomposeB){
+        return checkedPair.getSource().equals(decomposeA.getSource()) && checkedPair.getDestination().equals(decomposeB.getDestination());
     }
 
     public OrientedPair getFirst() {
@@ -145,11 +149,30 @@ public class Triangle {
 
         amountOfBTCToUse = Collections.min(amounts);
 
-        boolean amountLimitation = amountOfBTCToUse > 0 && amountOfBTCToUse < asset1.getMinAmount() ||
-                amountOfBTCToUse * price1 < asset2.getMinAmount() ||
-                amountOfBTCToUse * (price1 * price2) < asset3.getMinAmount();
+        double amount1 = amountOfBTCToUse;
+        double amount2 = amountOfBTCToUse * price1;
+        double amount3 = amountOfBTCToUse * (price1 * price2);
 
-        return !amountLimitation;
+        boolean amountsOfAssetsAreGood = amount1 > 0 &&
+                amount1 > asset1.getMinAmount() &&
+                amount2 > asset2.getMinAmount() &&
+                amount3 > asset3.getMinAmount();
+
+        boolean amountInPairsAreGood =
+                amountsInPairAreGood(first, amount1, amount2) &&
+                amountsInPairAreGood(second, amount2, amount3) &&
+                amountsInPairAreGood(third, amount3, amount1);
+
+        return amountsOfAssetsAreGood && amountInPairsAreGood;
+    }
+
+
+    public boolean amountsInPairAreGood(OrientedPair pair, double amount1, double amount2){
+        if(pair.isReversed()) {
+            return amount1 > pair.getPair().getMinQuantity() && amount2 > pair.getPair().getMinAmount();
+        }
+        return amount1 > pair.getPair().getMinAmount() && amount2 > pair.getPair().getMinQuantity();
+
     }
 
 

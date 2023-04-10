@@ -22,22 +22,31 @@ public class TradingPair {
 
     String symbol;
 
-    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale, String state, String symbol) {
+
+    double minQuantity;
+    double minAmount;
+
+    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale, String state, String symbol, double minQuantity, double minAmount) {
         this.source = source;
         this.destination = destination;
         this.quantityScale = quantityScale;
         this.amountScale = amountScale;
         this.state = state;
         this.symbol = symbol;
+        this.minQuantity = minQuantity;
+        this.minAmount = minAmount;
     }
 
     public static TradingPair fromSymbol(Symbol symbol) {
         SymbolTradeLimit limit = symbol.getSymbolTradeLimit();
         Asset source = Asset.fromSymbol(symbol, true);
         Asset destination = Asset.fromSymbol(symbol, false);
-        return new TradingPair(source, destination,
+        return new TradingPair(
+                source, destination,
                 limit.getQuantityScale(), limit.getAmountScale(),
-                symbol.getState(), symbol.getSymbol());
+                symbol.getState(), symbol.getSymbol(),
+                Double.parseDouble(limit.getMinQuantity()), Double.parseDouble(limit.getMinAmount())
+        );
     }
 
     public String getState() {
@@ -79,14 +88,6 @@ public class TradingPair {
         return this.symbol.equals(other.symbol);
     }
 
-    public void buy(Asset asset) {
-        if (asset.getName().equals(source.getName())) {
-            System.out.println("buying source");
-        } else if (asset.getName().equals(destination.getName())) {
-            System.out.println("buying destination");
-        }
-
-    }
     public String getSymbol() {
         return symbol;
     }
@@ -94,6 +95,22 @@ public class TradingPair {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
+    public double getMinQuantity() {
+        return minQuantity;
+    }
+
+    public void setMinQuantity(double minQuantity) {
+        this.minQuantity = minQuantity;
+    }
+
+    public double getMinAmount() {
+        return minAmount;
+    }
+
+    public void setMinAmount(double minAmount) {
+        this.minAmount = minAmount;
+    }
+
 
     public String logPrices() {
         String result = "";

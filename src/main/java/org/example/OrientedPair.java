@@ -29,6 +29,7 @@ public class OrientedPair  {
     public Asset getSource(){
         return isReversed ? pair.getDestination() : pair.getSource();
     }
+
     public Asset getDestination(){
         return isReversed ? pair.getSource() : pair.getDestination();
     }
