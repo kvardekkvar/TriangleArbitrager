@@ -26,15 +26,24 @@ public class Triangle {
     private double amountToTrade2; // Amount of X to sell
     private double amountToTrade3; // Amount of Y to sell
 
-    private final BookEntry entry1;
-    private final BookEntry entry2;
-    private final BookEntry entry3;
+    private BookEntry entry1;
+    private BookEntry entry2;
+    private BookEntry entry3;
 
     private double price1;
     private double price2;
     private double price3;
-    private final MarketData marketData = MarketData.INSTANCE;
+    private MarketData marketData = MarketData.INSTANCE;
     private double amountOfBTCToUse;
+
+
+    public Triangle(MarketData marketData, TradingPair first, TradingPair second, TradingPair third) {
+        this(first, second, third);
+        this.marketData = marketData;
+        entry1 = marketData.getBookEntryByPair(first);
+        entry2 = marketData.getBookEntryByPair(second);
+        entry3 = marketData.getBookEntryByPair(third);
+    }
 
     public Triangle(TradingPair first, TradingPair second, TradingPair third) {
 
@@ -45,13 +54,13 @@ public class Triangle {
 
         boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
         if (isReverseNeeded) {
-            if (isReverseOfPairNotNeeded(second, third)) {
+            if (isReverseNeeded(first, second, third) || isReverseNeeded(first, third, second)) {
                 oriented1.reverse();
             }
-            if (isReverseOfPairNotNeeded(first, third)) {
+            else if (isReverseNeeded(second, first, third) || isReverseNeeded(second, third, first)) {
                 oriented2.reverse();
             }
-            if (isReverseOfPairNotNeeded(first, second)) {
+            else if (isReverseNeeded(third, second, first) || isReverseNeeded(third, first, second)) {
                 oriented3.reverse();
             }
         }
@@ -76,6 +85,10 @@ public class Triangle {
 
     public boolean isReverseOfPairNotNeeded(TradingPair one, TradingPair other) {
         return one.getSource().equals(other.getDestination()) || one.getDestination().equals(other.getSource());
+    }
+
+    public boolean isReverseNeeded(TradingPair checkedPair, TradingPair decomposeA, TradingPair decomposeB){
+        return checkedPair.getSource().equals(decomposeA.getSource()) && checkedPair.getDestination().equals(decomposeB.getDestination());
     }
 
     public OrientedPair getFirst() {
@@ -111,42 +124,59 @@ public class Triangle {
         price2 = second.isReversed() ? 1 / marketData.getAskPrice(second.getPair()) : marketData.getBidPrice(second.getPair());
         price3 = third.isReversed() ? 1 / marketData.getAskPrice(third.getPair()) : marketData.getBidPrice(third.getPair());
 
-        //System.out.printf("unprofitable by price: %s: %s, %s, %s\n", this, price1, price2, price3);
-
         return !(price1 * price2 * price3 * Math.pow(1 - FeeSchedule.getMultiplicatorFee(), 3) < 1);
     }
 
-    public double setAmount(OrientedPair orientedPair, Asset firstAsset, Asset secondAsset){
+    public double setAmount(OrientedPair orientedPair, Asset firstAsset, Asset secondAsset) {
         boolean reversed = orientedPair.isReversed();
-        double amount = reversed ? marketData.getAskAmount(orientedPair.getPair()) : marketData.getBidAmount(orientedPair.getPair());
+        double amount = reversed ? marketData.getAskAmount(orientedPair.getPair()) * marketData.getAskPrice(orientedPair.getPair()) : marketData.getBidAmount(orientedPair.getPair());
         amount = roundAmount(orientedPair, amount);
         return amount;
     }
-    public double roundAmount(OrientedPair orientedPair, double amount){
+
+    public double roundAmount(OrientedPair orientedPair, double amount) {
         int scale = orientedPair.getScale();
         amount = Util.amountRoundedDown(amount, scale);
         return amount;
     }
-    public boolean triangleAmountsAreGreaterThanMinimum() {
-        double amount1 = setAmount(first, asset1, asset2);
-        double amount2 = setAmount(second, asset2, asset3);
-        double amount3 = setAmount(third, asset3, asset1);
 
-        List<Double> amounts = List.of(amount1, amount2 / price1, amount3 / (price1 * price2), AMOUNT_OF_BTC_TO_TRADE);
+    public boolean triangleAmountsAreGreaterThanMinimum() {
+        double amountOfAsset1 = setAmount(first, asset1, asset2);
+        double amountOfAsset2 = setAmount(second, asset2, asset3);
+        double amountOfAsset3 = setAmount(third, asset3, asset1);
+
+        List<Double> amounts = List.of(amountOfAsset1, amountOfAsset2 / price1, amountOfAsset3 / (price1 * price2), AMOUNT_OF_BTC_TO_TRADE);
 
         amountOfBTCToUse = Collections.min(amounts);
 
-        boolean amountLimitation = amountOfBTCToUse < asset1.getMinAmount() ||
-                amountOfBTCToUse * price1 < asset2.getMinAmount() ||
-                amountOfBTCToUse * (price1 * price2) < asset3.getMinAmount();
+        double amount1 = amountOfBTCToUse;
+        double amount2 = amountOfBTCToUse * price1;
+        double amount3 = amountOfBTCToUse * (price1 * price2);
 
-        return !amountLimitation;
+        boolean amountsOfAssetsAreGood = amount1 > 0 &&
+                amount1 > asset1.getMinAmount() &&
+                amount2 > asset2.getMinAmount() &&
+                amount3 > asset3.getMinAmount();
+
+        boolean amountInPairsAreGood =
+                amountsInPairAreGood(first, amount1, amount2) &&
+                amountsInPairAreGood(second, amount2, amount3) &&
+                amountsInPairAreGood(third, amount3, amount1);
+
+        return amountsOfAssetsAreGood && amountInPairsAreGood;
     }
 
 
+    public boolean amountsInPairAreGood(OrientedPair pair, double amount1, double amount2){
+        if(pair.isReversed()) {
+            return amount1 > pair.getPair().getMinQuantity() && amount2 > pair.getPair().getMinAmount();
+        }
+        return amount1 > pair.getPair().getMinAmount() && amount2 > pair.getPair().getMinQuantity();
+
+    }
+
 
     public boolean isProfitable() {
-
 
         if (!triangleIsNew()) {
             return false;
@@ -159,19 +189,33 @@ public class Triangle {
             return false;
         }
 
+        setAmountsToTrade();
 
-        double fee = (1 - FeeSchedule.getMultiplicatorFee());
-        amountToTrade1 = roundAmount(first, amountOfBTCToUse * fee);
-        amountToTrade2 = roundAmount(second, amountToTrade1 * price1 * fee);
-        amountToTrade3 = roundAmount(third, amountToTrade2 * price2 * fee);
+        if (!areAmountsToTradePositive()) {
+            return false;
+        }
 
-
-
-
-        System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
+        System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Prices of triangle %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
                 first.getPair().logPrices(), second.getPair().logPrices(), third.getPair().logPrices(),
+                price1, price2, price3,
                 amountToTrade1, amountToTrade2, amountToTrade3);
         return true;
+
+    }
+
+    private boolean areAmountsToTradePositive() {
+        return amountToTrade1 > 0 && amountToTrade2 > 0 && amountToTrade3 > 0;
+    }
+
+    private void setAmountsToTrade() {
+        double fee = (1 - FeeSchedule.getMultiplicatorFee());
+        double am1 = first.isReversed() ? amountOfBTCToUse * fee * price1 : amountOfBTCToUse * fee;
+        double am2 = second.isReversed() ? amountOfBTCToUse * price1 * fee * price2 * fee : am1 * fee;
+        double am3 = third.isReversed() ? amountOfBTCToUse * price1 * fee * price2 * fee * price3 * fee : am2 * fee;
+
+        amountToTrade1 = roundAmount(first, am1);
+        amountToTrade2 = roundAmount(second, am2);
+        amountToTrade3 = roundAmount(third, am3);
 
     }
 
