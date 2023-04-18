@@ -12,7 +12,7 @@ public class WebsocketClientEndpoint {
 
     Session userSession;
     private MsgHandler messageHandler;
-    private WebSocketContainer container;
+    WebSocketContainer container;
     private URI endpointURI;
 
     public WebsocketClientEndpoint(URI endpointURI) {

@@ -1,5 +1,8 @@
 package org.example.API;
 
+import org.example.Main;
+
+import java.io.IOException;
 import java.net.URI;
 
 public class PoloniexApi {
@@ -8,14 +11,26 @@ public class PoloniexApi {
     private WebsocketClientEndpoint publicWebsocket;
 
     private RestApiClient privateRest;
+
     private PoloniexApi() {
         connect();
     }
 
-    private void connect(){
+    private void connect() {
         URI publicEndpoint = URI.create("wss://ws.poloniex.com/ws/public");
         URI privateEndpoint = URI.create("wss://ws.poloniex.com/ws/private");
 
+        if (this.publicWebsocket != null && this.publicWebsocket.userSession != null) {
+            try {
+                this.publicWebsocket.userSession.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            this.publicWebsocket.userSession = null;
+            this.publicWebsocket.container = null;
+            this.publicWebsocket = null;
+        }
+        Main.RESTART_NEEDED = false;
         this.publicWebsocket = new WebsocketClientEndpoint(publicEndpoint);
 
         MsgHandler messageHandler = new MsgHandler();
@@ -25,7 +40,8 @@ public class PoloniexApi {
         this.privateRest = new RestApiClient();
 
     }
-    public void reconnect(){
+
+    public void reconnect() {
         connect();
     }
 

@@ -3,9 +3,7 @@ package org.example;
 import org.example.API.Crypto;
 import org.example.API.Pinger;
 import org.example.API.PoloniexApi;
-import org.example.util.Constants;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
@@ -22,7 +20,6 @@ public class Main {
             RESTART_NEEDED = false;
             PoloniexApi poloniexApi = PoloniexApi.INSTANCE;
             poloniexApi.reconnect();
-            Crypto crypto = Crypto.INSTANCE;
             Pinger pinger = new Pinger();
 
             String symbolsRequest = "{\n" +
@@ -66,7 +63,6 @@ public class Main {
                 );
                 poloniexApi.sendPublic(bookRequest);
             }
-
             System.out.println("Subscribed to all channels");
 
             while (!RESTART_NEEDED) {
