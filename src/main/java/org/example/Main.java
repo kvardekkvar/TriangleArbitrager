@@ -15,11 +15,14 @@ public class Main {
     public static boolean RESTART_NEEDED = false;
 
     public static void main(String[] args) throws InterruptedException {
-
+        long restarts = 0;
         while (true) {
             RESTART_NEEDED = false;
             PoloniexApi poloniexApi = PoloniexApi.INSTANCE;
-            poloniexApi.reconnect();
+            if (restarts > 0) {
+                poloniexApi.reconnect();
+            }
+            restarts++;
             Pinger pinger = new Pinger();
 
             String symbolsRequest = "{\n" +
@@ -35,7 +38,7 @@ public class Main {
                 TradingPair pair1 = triangle.getFirst().getPair();
                 TradingPair pair2 = triangle.getSecond().getPair();
                 TradingPair pair3 = triangle.getThird().getPair();
-                if (!pair1.getState().equals(NORMAL_STATE) || !pair2.getState().equals(NORMAL_STATE) || !pair3.getState().equals(NORMAL_STATE)){
+                if (!pair1.getState().equals(NORMAL_STATE) || !pair2.getState().equals(NORMAL_STATE) || !pair3.getState().equals(NORMAL_STATE)) {
                     continue;
                 }
 
@@ -52,7 +55,6 @@ public class Main {
                 if (!subscriptions.contains(thirdSymbol)) {
                     subscriptions.add(thirdSymbol);
                 }
-                //System.out.printf("%s \n %s \n%s \n", firstSymbol, secondSymbol, thirdSymbol);
 
             }
 
@@ -71,7 +73,7 @@ public class Main {
                 }
 
                 try {
-                    LockSupport.parkNanos(16384) ;
+                    LockSupport.parkNanos(16384);
                 } catch (Exception e) {
                     break;
                 }

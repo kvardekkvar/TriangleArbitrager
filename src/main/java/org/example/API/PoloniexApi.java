@@ -18,7 +18,6 @@ public class PoloniexApi {
 
     private void connect() {
         URI publicEndpoint = URI.create("wss://ws.poloniex.com/ws/public");
-        URI privateEndpoint = URI.create("wss://ws.poloniex.com/ws/private");
 
         if (this.publicWebsocket != null && this.publicWebsocket.userSession != null) {
             try {
@@ -29,6 +28,7 @@ public class PoloniexApi {
             this.publicWebsocket.userSession = null;
             this.publicWebsocket.container = null;
             this.publicWebsocket = null;
+            System.gc();
         }
         Main.RESTART_NEEDED = false;
         this.publicWebsocket = new WebsocketClientEndpoint(publicEndpoint);
