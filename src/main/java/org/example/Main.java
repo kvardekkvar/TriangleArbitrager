@@ -1,11 +1,12 @@
 package org.example;
 
-import org.example.API.Crypto;
+import kotlin.concurrent.LocksKt;
 import org.example.API.Pinger;
 import org.example.API.PoloniexApi;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.LockSupport;
 
 import static org.example.util.Constants.NORMAL_STATE;
@@ -68,14 +69,13 @@ public class Main {
             System.out.println("Subscribed to all channels");
 
             while (!RESTART_NEEDED) {
-                if (System.currentTimeMillis()%1000 < 5){
+                if ((System.currentTimeMillis() & 0x3ff) < 5){
                     pinger.sendPing();
                 }
 
                 try {
                     LockSupport.parkNanos(16384);
-                } catch (Exception e) {
-                    break;
+                } catch (Exception ignored) {
                 }
             }
         }
