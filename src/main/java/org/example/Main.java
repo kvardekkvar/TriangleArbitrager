@@ -1,12 +1,10 @@
 package org.example;
 
-import kotlin.concurrent.LocksKt;
 import org.example.API.Pinger;
 import org.example.API.PoloniexApi;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.LockSupport;
 
 import static org.example.util.Constants.NORMAL_STATE;
