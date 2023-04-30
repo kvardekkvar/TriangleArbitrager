@@ -1,6 +1,10 @@
 package org.example.API;
 
-public class Pinger extends Thread {
+import org.example.Main;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class Pinger implements Runnable {
     private PoloniexApi poloniexApi = PoloniexApi.INSTANCE;
 
     public static  String PING_MESSAGE = "{\n" +
@@ -9,5 +13,12 @@ public class Pinger extends Thread {
 
     public void sendPing(){
         poloniexApi.sendPublic(PING_MESSAGE);
+    }
+
+    public void run(){
+        while (!Main.RESTART_NEEDED){
+            sendPing();
+            LockSupport.parkNanos(2_000_000_000L);
+        }
     }
 }

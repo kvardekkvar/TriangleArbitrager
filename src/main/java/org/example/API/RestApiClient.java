@@ -39,7 +39,7 @@ public class RestApiClient {
             cnt++;
             try {
                 System.out.println("Api sends market order...\n");
-                //System.out.println(json);
+                System.out.println(json);
                 if (Constants.MOCK) {
                     break;
                 } else {

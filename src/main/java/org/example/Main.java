@@ -23,6 +23,9 @@ public class Main {
             }
             restarts++;
             Pinger pinger = new Pinger();
+            Thread pingerThread = new Thread(pinger);
+            pingerThread.start();
+
 
             String symbolsRequest = "{\n" +
                     "  \"event\": \"subscribe\",\n" +
@@ -67,12 +70,8 @@ public class Main {
             System.out.println("Subscribed to all channels");
 
             while (!RESTART_NEEDED) {
-                if ((System.currentTimeMillis() & 0x3ff) < 5){
-                    pinger.sendPing();
-                }
-
                 try {
-                    LockSupport.parkNanos(16384);
+                    LockSupport.parkNanos(1_638_400_000L);
                 } catch (Exception ignored) {
                 }
             }
