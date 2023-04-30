@@ -25,7 +25,6 @@ public class MsgHandler implements MessageHandler {
     private PoloniexApi api;
 
 
-
     public String prepareBuyMessageBody(String symbol, String amountString, boolean isAmount, String side) {
         MarketOrderRequest orderRequest = new MarketOrderRequest(symbol, amountString, isAmount, side);
         return jsonHandler.toJSON(orderRequest);
@@ -80,12 +79,17 @@ public class MsgHandler implements MessageHandler {
         BookResponse bookResponse;
 
 
-        JsonNode node = jsonHandler.readEntireJSON(message);
+//        JsonNode node = jsonHandler.readEntireJSON(message);
+//
+//        if (    node.has("channel") &&
+//                node.get("channel").asText().equals("book") &&
+//                node.has("data") &&
+//                node.get("data").has(0)) {
+        if (message.contains("\"event\":\"subscribe\"")) {
+            return;
+        }
 
-        if (    node.has("channel") &&
-                node.get("channel").asText().equals("book") &&
-                node.has("data") &&
-                node.get("data").has(0)) {
+        if (message.contains("\"channel\":\"book\"")) {
 
             bookResponse = jsonHandler.fromJSON(message, BookResponse.class);
 
@@ -127,12 +131,12 @@ public class MsgHandler implements MessageHandler {
             }
 
         }
-
-        if (    node.has("channel") &&
-                node.get("channel").asText().equals("symbols") &&
-                node.has("data") &&
-                node.get("data").has(0)) {
-
+//
+//        if (node.has("channel") &&
+//                node.get("channel").asText().equals("symbols") &&
+//                node.has("data") &&
+//                node.get("data").has(0)) {
+        if (message.contains("\"channel\":\"symbols\"")) {
             symbolsResponse = jsonHandler.fromJSON(message, SymbolsResponse.class);
 
 
