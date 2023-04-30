@@ -3,6 +3,7 @@ package org.example;
 import org.example.API.Pinger;
 import org.example.API.PoloniexApi;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
@@ -67,7 +68,7 @@ public class Main {
                 );
                 poloniexApi.sendPublic(bookRequest);
             }
-            System.out.println("Subscribed to all channels");
+            System.out.printf("%s Subscribed to all channels", new Date());
 
             while (!RESTART_NEEDED) {
                 try {
