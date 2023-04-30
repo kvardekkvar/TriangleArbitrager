@@ -1,6 +1,5 @@
 package org.example.API;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.example.*;
 import org.example.models.book_request.BookData;
 import org.example.models.requests.MarketOrderRequest;
@@ -79,12 +78,7 @@ public class MsgHandler implements MessageHandler {
         BookResponse bookResponse;
 
 
-//        JsonNode node = jsonHandler.readEntireJSON(message);
-//
-//        if (    node.has("channel") &&
-//                node.get("channel").asText().equals("book") &&
-//                node.has("data") &&
-//                node.get("data").has(0)) {
+
         if (message.contains("\"event\":\"subscribe\"")) {
             return;
         }
@@ -131,11 +125,7 @@ public class MsgHandler implements MessageHandler {
             }
 
         }
-//
-//        if (node.has("channel") &&
-//                node.get("channel").asText().equals("symbols") &&
-//                node.has("data") &&
-//                node.get("data").has(0)) {
+
         if (message.contains("\"channel\":\"symbols\"")) {
             symbolsResponse = jsonHandler.fromJSON(message, SymbolsResponse.class);
 
