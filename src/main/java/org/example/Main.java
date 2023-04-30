@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 
 import static org.example.util.Constants.NORMAL_STATE;
+import static org.example.util.Util.log;
 
 public class Main {
 
@@ -68,7 +69,7 @@ public class Main {
                 );
                 poloniexApi.sendPublic(bookRequest);
             }
-            System.out.printf("%s Subscribed to all channels", new Date());
+            log("Subscribed to all channels");
 
             while (!RESTART_NEEDED) {
                 try {

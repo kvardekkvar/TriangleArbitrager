@@ -4,6 +4,8 @@ import org.example.util.Constants;
 
 import java.util.*;
 
+import static org.example.util.Util.log;
+
 public class MarketData {
     public static MarketData INSTANCE = new MarketData();
 
@@ -71,15 +73,15 @@ public class MarketData {
                 stub.setTimestampWhenUpdated(0);
                 dataTable.put(pair, stub);
             }
-            System.out.println("Hashtable initialized");
+            log("Hashtable initialized");
         } else {
-            System.out.println("Hashtable already initialized");
+            log("Hashtable already initialized");
         }
     }
 
     public void initializeTriangles() {
         if (trianglesByPair.size() > 0) {
-            System.out.println("Triangles already initialized");
+            log("Triangles already initialized");
             return;
         }
 
@@ -101,7 +103,7 @@ public class MarketData {
             }
         }
 
-        System.out.println("Triangles initialized");
+        log("Triangles initialized");
 
     }
 

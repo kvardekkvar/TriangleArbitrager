@@ -5,6 +5,8 @@ import org.example.util.Constants;
 
 import java.io.IOException;
 
+import static org.example.util.Util.log;
+
 public class RestApiClient {
 
     public static final String BASE_URL = "https://api.poloniex.com";
@@ -38,8 +40,8 @@ public class RestApiClient {
 
             cnt++;
             try {
-                System.out.println("Api sends market order...\n");
-                System.out.println(json);
+                log("Api sends market order...\n");
+                log(json);
                 if (Constants.MOCK) {
                     break;
                 } else {

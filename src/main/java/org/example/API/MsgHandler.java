@@ -14,6 +14,9 @@ import org.example.util.Util;
 import javax.websocket.MessageHandler;
 import java.util.List;
 
+import static org.example.util.Util.log;
+
+
 public class MsgHandler implements MessageHandler {
 
     private final MarketData marketData = MarketData.INSTANCE;
@@ -61,7 +64,7 @@ public class MsgHandler implements MessageHandler {
                 String body = prepareBuyMessageBody(symbol, amountString, isAmount, side);
                 String signature = prepareBuyMessageSignature(body, timestamp);
 
-                System.out.printf("Order message sending: %s\n%n", pair.logPrices());
+                log(String.format("Order message sending: %s\n%n", pair.logPrices()));
                 api.makeOrder(body, signature, timestamp);
                 isSuccess = true;
             } catch (LowBalanceException e) {

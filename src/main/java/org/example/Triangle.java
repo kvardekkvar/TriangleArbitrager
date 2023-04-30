@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.example.util.Constants.ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS;
 import static org.example.util.Constants.AMOUNT_OF_BTC_TO_TRADE;
+import static org.example.util.Util.log;
 
 public class Triangle {
 
@@ -195,13 +196,14 @@ public class Triangle {
             return false;
         }
 
-        System.out.printf("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Prices of triangle %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
+        log(String.format("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Prices of triangle %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
                 first.getPair().logPrices(), second.getPair().logPrices(), third.getPair().logPrices(),
                 price1, price2, price3,
-                amountToTrade1, amountToTrade2, amountToTrade3);
+                amountToTrade1, amountToTrade2, amountToTrade3));
         return true;
 
     }
+
 
     private boolean areAmountsToTradePositive() {
         return amountToTrade1 > 0 && amountToTrade2 > 0 && amountToTrade3 > 0;
