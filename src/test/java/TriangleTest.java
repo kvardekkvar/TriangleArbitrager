@@ -132,4 +132,49 @@ public class TriangleTest {
         Assert.assertEquals(0.21 * modifier * fee * fee * fee, triangle.getAmountToTrade3(), acceptable_error);
 
     }
-}
+
+    @Test
+    public void pairWithGoodPricesPassesValidation() {
+        double modifier = 10e-5;
+
+        double BTC_USDT_price = 20000f;
+        double BTC_ETH_price = 0.1f;
+        double ETH_USDT_price = 2100f;
+
+        Asset BTC = new Asset("BTC", 0);
+        Asset USDT = new Asset("USDT", 0);
+        Asset ETH = new Asset("ETH", 0);
+
+        TradingPair ETH_BTC = new TradingPair(ETH, BTC, 8, 8, NORMAL_STATE, "ETH_BTC", 0.00001, 0.00001);
+        TradingPair ETH_USDT = new TradingPair(ETH, USDT, 8, 8, NORMAL_STATE, "ETH_USDT", 0.00001, 0.00001);
+        TradingPair BTC_USDT = new TradingPair(BTC, USDT, 8, 8, NORMAL_STATE, "BTC_USDT", 0.00001, 0.00001);
+
+
+        Mockito.when(marketData.getAskPrice(ETH_BTC)).thenReturn(BTC_ETH_price);
+        Mockito.when(marketData.getBidPrice(ETH_USDT)).thenReturn(ETH_USDT_price);
+        Mockito.when(marketData.getAskPrice(BTC_USDT)).thenReturn(BTC_USDT_price);
+
+        Mockito.when(marketData.getAskAmount(ETH_BTC)).thenReturn(2 * modifier);
+        Mockito.when(marketData.getBidAmount(ETH_USDT)).thenReturn(2 * modifier);
+        Mockito.when(marketData.getAskAmount(BTC_USDT)).thenReturn(0.21 * modifier);
+
+        BookEntry entry1 = new BookEntry(ETH_BTC, 2, 2, BTC_ETH_price, 2 * modifier);
+        BookEntry entry2 = new BookEntry(ETH_USDT, BTC_ETH_price, 2 * modifier, 2, 2);
+        BookEntry entry3 = new BookEntry(BTC_USDT, 2, 2, BTC_ETH_price, 0.21 * modifier);
+        long timestamp = System.currentTimeMillis();
+        entry1.setTimestampWhenUpdated(timestamp);
+        entry2.setTimestampWhenUpdated(timestamp);
+        entry3.setTimestampWhenUpdated(timestamp);
+
+        Mockito.when(marketData.getBookEntryByPair(ETH_BTC)).thenReturn(entry1);
+        Mockito.when(marketData.getBookEntryByPair(ETH_USDT)).thenReturn(entry2);
+        Mockito.when(marketData.getBookEntryByPair(BTC_USDT)).thenReturn(entry3);
+
+        Triangle triangle = new Triangle(marketData, ETH_BTC, ETH_USDT, BTC_USDT);
+
+        boolean actual = triangle.amountsInPairAreGood(triangle.getFirst(), 0.000015, 0.000015);
+
+        Assert.assertTrue(actual);
+    }
+
+    }

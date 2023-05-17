@@ -3,6 +3,7 @@ package org.example;
 import org.example.util.Constants;
 import org.example.util.Util;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -170,9 +171,9 @@ public class Triangle {
 
     public boolean amountsInPairAreGood(OrientedPair pair, double amount1, double amount2){
         if(pair.isReversed()) {
-            return amount1 > pair.getPair().getMinQuantity() && amount2 > pair.getPair().getMinAmount();
+            return amount1 > pair.getPair().getMinAmount() && amount2 > pair.getPair().getMinQuantity();
         }
-        return amount1 > pair.getPair().getMinAmount() && amount2 > pair.getPair().getMinQuantity();
+        return amount1 > pair.getPair().getMinQuantity() && amount2 > pair.getPair().getMinAmount();
 
     }
 
@@ -182,10 +183,10 @@ public class Triangle {
         if (!triangleIsNew()) {
             return false;
         }
+
         if (!trianglePricesAreProfitable()) {
             return false;
         }
-
         if (!triangleAmountsAreGreaterThanMinimum()) {
             return false;
         }
