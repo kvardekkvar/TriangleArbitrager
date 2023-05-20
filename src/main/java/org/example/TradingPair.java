@@ -5,10 +5,10 @@ import org.example.models.symbols_request.SymbolTradeLimit;
 
 public class TradingPair {
 
-    protected Asset source;
+    protected Asset base;
 
 
-    protected Asset destination;
+    protected Asset quote;
 
     int quantityScale;
 
@@ -26,9 +26,9 @@ public class TradingPair {
     double minQuantity;
     double minAmount;
 
-    public TradingPair(Asset source, Asset destination, int quantityScale, int amountScale, String state, String symbol, double minQuantity, double minAmount) {
-        this.source = source;
-        this.destination = destination;
+    public TradingPair(Asset base, Asset quote, int quantityScale, int amountScale, String state, String symbol, double minQuantity, double minAmount) {
+        this.base = base;
+        this.quote = quote;
         this.quantityScale = quantityScale;
         this.amountScale = amountScale;
         this.state = state;
@@ -64,24 +64,24 @@ public class TradingPair {
         return amountScale;
     }
 
-    public Asset getSource() {
-        return source;
+    public Asset getBase() {
+        return base;
     }
 
-    public void setSource(Asset source) {
-        this.source = source;
+    public void setBase(Asset base) {
+        this.base = base;
     }
 
-    public Asset getDestination() {
-        return destination;
+    public Asset getQuote() {
+        return quote;
     }
 
-    public void setDestination(Asset destination) {
-        this.destination = destination;
+    public void setQuote(Asset quote) {
+        this.quote = quote;
     }
 
     public String toString() {
-        return source.getName() + "_" + destination.getName();
+        return base.getName() + "_" + quote.getName();
     }
 
     public boolean equals(TradingPair other) {
@@ -115,12 +115,12 @@ public class TradingPair {
     public String logPrices() {
         String result = "";
         MarketData data = MarketData.INSTANCE;
-        TradingPair pair = data.findTradingPairBetween(source, destination);
+        TradingPair pair = data.findTradingPairBetween(base, quote);
         BookEntry entry = data.getDataTable().get(pair);
         if (entry != null) {
             result = String.format("pair %s, price1: %s, price2: %s", this, entry.getBidPrice(), entry.getAskPrice());
         } else {
-            System.out.printf("MarketData has no pair  %s %s %s\n", source, destination, this);
+            System.out.printf("MarketData has no pair  %s %s %s\n", base, quote, this);
         }
         return result;
     }

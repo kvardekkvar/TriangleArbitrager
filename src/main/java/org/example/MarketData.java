@@ -26,7 +26,7 @@ public class MarketData {
     }
 
     public void addPair(TradingPair pair) {
-        String name = pair.source + "_" + pair.destination;
+        String name = pair.base + "_" + pair.quote;
         if (!tradingPairsMap.containsKey(name)) {
             tradingPairsMap.put(name, pair);
         }
@@ -87,8 +87,8 @@ public class MarketData {
 
         Asset BTC = Constants.BTC;
         for (TradingPair pair : tradingPairsMap.values()) {
-            Asset source = pair.getSource();
-            Asset destination = pair.getDestination();
+            Asset source = pair.getBase();
+            Asset destination = pair.getQuote();
             if (!source.equals(BTC) && !destination.equals(BTC)) {
                 TradingPair first = findTradingPairBetween(BTC, source);
                 TradingPair second = pair;

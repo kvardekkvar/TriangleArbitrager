@@ -27,19 +27,26 @@ public class OrientedPair  {
     }
 
     public Asset getSource(){
-        return isReversed ? pair.getDestination() : pair.getSource();
+        return isReversed ? pair.getQuote() : pair.getBase();
     }
 
     public Asset getDestination(){
-        return isReversed ? pair.getSource() : pair.getDestination();
+        return isReversed ? pair.getBase() : pair.getQuote();
     }
 
+    public Asset getBase(){
+        return pair.getBase();
+    }
+
+    public Asset getQuote(){
+        return pair.getQuote();
+    }
     public int getScale(){
         return isReversed ? pair.getAmountScale() : pair.getQuantityScale();
     }
 
     public String toString() {
 
-        return String.format("%s_%s%s", pair.getSource(), pair.getDestination(), isReversed ? "r" : "");
+        return String.format("%s_%s%s", pair.getBase(), pair.getQuote(), isReversed ? "r" : "");
     }
 }

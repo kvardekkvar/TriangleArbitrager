@@ -3,12 +3,10 @@ package org.example;
 import org.example.util.Constants;
 import org.example.util.Util;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
-import static org.example.util.Constants.ACCEPTABLE_TRIANGLE_AGE_IN_MILLIS;
-import static org.example.util.Constants.AMOUNT_OF_BTC_TO_TRADE;
+import static org.example.util.Constants.*;
 import static org.example.util.Util.log;
 
 public class Triangle {
@@ -54,15 +52,13 @@ public class Triangle {
         OrientedPair oriented3 = new OrientedPair(third);
 
 
-        boolean isReverseNeeded = first.getSource().equals(second.getSource()) || first.getSource().equals(third.getSource()) || second.getSource().equals(third.getSource());
+        boolean isReverseNeeded = first.getBase().equals(second.getBase()) || first.getBase().equals(third.getBase()) || second.getBase().equals(third.getBase());
         if (isReverseNeeded) {
             if (isReverseNeeded(first, second, third) || isReverseNeeded(first, third, second)) {
                 oriented1.reverse();
-            }
-            else if (isReverseNeeded(second, first, third) || isReverseNeeded(second, third, first)) {
+            } else if (isReverseNeeded(second, first, third) || isReverseNeeded(second, third, first)) {
                 oriented2.reverse();
-            }
-            else if (isReverseNeeded(third, second, first) || isReverseNeeded(third, first, second)) {
+            } else if (isReverseNeeded(third, second, first) || isReverseNeeded(third, first, second)) {
                 oriented3.reverse();
             }
         }
@@ -86,11 +82,11 @@ public class Triangle {
     }
 
     public boolean isReverseOfPairNotNeeded(TradingPair one, TradingPair other) {
-        return one.getSource().equals(other.getDestination()) || one.getDestination().equals(other.getSource());
+        return one.getBase().equals(other.getQuote()) || one.getQuote().equals(other.getBase());
     }
 
-    public boolean isReverseNeeded(TradingPair checkedPair, TradingPair decomposeA, TradingPair decomposeB){
-        return checkedPair.getSource().equals(decomposeA.getSource()) && checkedPair.getDestination().equals(decomposeB.getDestination());
+    public boolean isReverseNeeded(TradingPair checkedPair, TradingPair decomposeA, TradingPair decomposeB) {
+        return checkedPair.getBase().equals(decomposeA.getBase()) && checkedPair.getQuote().equals(decomposeB.getQuote());
     }
 
     public OrientedPair getFirst() {
@@ -146,14 +142,14 @@ public class Triangle {
         double amountOfAsset1 = setAmount(first, asset1, asset2);
         double amountOfAsset2 = setAmount(second, asset2, asset3);
         double amountOfAsset3 = setAmount(third, asset3, asset1);
-
         List<Double> amounts = List.of(amountOfAsset1, amountOfAsset2 / price1, amountOfAsset3 / (price1 * price2), AMOUNT_OF_BTC_TO_TRADE);
 
         amountOfBTCToUse = Collections.min(amounts);
-
         double amount1 = amountOfBTCToUse;
         double amount2 = amountOfBTCToUse * price1;
         double amount3 = amountOfBTCToUse * (price1 * price2);
+
+        System.out.printf("Amolunts of assets: %s BTC, %s FUND, %s TRX\n", amount1, amount2, amount3);
 
         boolean amountsOfAssetsAreGood = amount1 > 0 &&
                 amount1 > asset1.getMinAmount() &&
@@ -162,15 +158,15 @@ public class Triangle {
 
         boolean amountInPairsAreGood =
                 amountsInPairAreGood(first, amount1, amount2) &&
-                amountsInPairAreGood(second, amount2, amount3) &&
-                amountsInPairAreGood(third, amount3, amount1);
+                        amountsInPairAreGood(second, amount2, amount3) &&
+                        amountsInPairAreGood(third, amount3, amount1);
 
         return amountsOfAssetsAreGood && amountInPairsAreGood;
     }
 
 
-    public boolean amountsInPairAreGood(OrientedPair pair, double amount1, double amount2){
-        if(pair.isReversed()) {
+    public boolean amountsInPairAreGood(OrientedPair pair, double amount1, double amount2) {
+        if (pair.isReversed()) {
             return amount1 > pair.getPair().getMinAmount() && amount2 > pair.getPair().getMinQuantity();
         }
         return amount1 > pair.getPair().getMinQuantity() && amount2 > pair.getPair().getMinAmount();
@@ -192,12 +188,10 @@ public class Triangle {
         }
 
         setAmountsToTrade();
-
         if (!areAmountsToTradePositive()) {
             return false;
         }
-
-        log(String.format("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Prices of triangle %s, %s, %s \n Amounts %s, %s, %s \n </TRIANGLE>\n", this,
+        log(String.format("<TRIANGLE profitable>\n %s \n Prices %s, %s, %s \n Prices of triangle %s, %s, %s \n Amounts to trade %s, %s, %s \n </TRIANGLE>\n", this,
                 first.getPair().logPrices(), second.getPair().logPrices(), third.getPair().logPrices(),
                 price1, price2, price3,
                 amountToTrade1, amountToTrade2, amountToTrade3));
@@ -212,9 +206,22 @@ public class Triangle {
 
     private void setAmountsToTrade() {
         double fee = (1 - FeeSchedule.getMultiplicatorFee());
-        double am1 = first.isReversed() ? amountOfBTCToUse * fee * price1 : amountOfBTCToUse * fee;
-        double am2 = second.isReversed() ? amountOfBTCToUse * price1 * fee * price2 * fee : am1 * fee;
-        double am3 = third.isReversed() ? amountOfBTCToUse * price1 * fee * price2 * fee * price3 * fee : am2 * fee;
+//        double am1 = first.isReversed() ? amountOfBTCToUse * fee * price1 : amountOfBTCToUse * fee;
+//        double am2 = second.isReversed() ? amountOfBTCToUse * price1 * fee * price2 * fee : am1 * fee;
+//        double am3 = third.isReversed() ? amountOfBTCToUse * price1 * fee * price2 * fee * price3 * fee : am2 * fee;
+
+        //old above
+
+        boolean condition1 = first.getBase().equals(BTC) && first.isReversed() || first.getQuote().equals(BTC) && !first.isReversed();
+        boolean condition2 = second.getBase().equals(asset2) && second.isReversed() || second.getQuote().equals(asset2) && !second.isReversed();
+        boolean condition3 = third.getBase().equals(asset3) && third.isReversed() || third.getQuote().equals(asset3) && !third.isReversed();
+
+        System.out.printf("Assets: %s, %s, %s, Bases: %s, %s, %s, Conditions: %s, %s, %s\n", asset1.getName(), asset2.getName(), asset3.getName(),
+                first.getBase().getName(), second.getBase().getName(), third.getBase().getName(),
+                condition1, condition2, condition3);
+        double am1 = condition1 ? amountOfBTCToUse * fee * price1 : amountOfBTCToUse * fee;
+        double am2 = condition2 ? amountOfBTCToUse * price1 * fee * price2 * fee : am1 * price1 * fee;
+        double am3 = condition3 ? amountOfBTCToUse * price1 * fee * price2 * fee * price3 * fee : am2 * price2 * fee;
 
         amountToTrade1 = roundAmount(first, am1);
         amountToTrade2 = roundAmount(second, am2);
